@@ -1,0 +1,69 @@
+<p-table
+  #dt
+  [value]="items"
+  responsiveLayout="scroll"
+  [lazy]="isLazyLoad"
+  (onLazyLoad)="onPageChange.emit($event)"
+  [paginator]="true"
+  [rows]="take"
+  [rowsPerPageOptions]="[40, 60, 80]"
+  [showCurrentPageReport]="true"
+  [totalRecords]="totalRecords"
+  currentPageReportTemplate="{first} đến {last} trong tổng số {totalRecords}"
+  [selectionMode]="selectionMode"
+  [(selection)]="selectedItem"
+  [loading]="loading"
+  [styleClass]="tableStyleClass + ' p-datatable-gridlines m-table'"
+  [rowHover]="true"
+  [dataKey]="dataKey"
+  (onRowSelect)="selectRow.emit(selectedItem)"
+  (onRowUnselect)="selectRow.emit(selectedItem)"
+  [scrollable]="true"
+  [scrollHeight]="'calc(100vh - ' + calcHeight + 'px)'"
+  [lazyLoadOnInit]="lazyLoadOnInit"
+>
+<!-- [scrollHeight]="calcHeight + 'px'"" -->
+  <ng-template pTemplate="header">
+    <tr>
+      <!-- Dòng STT -->
+      <th [style.width]="indexColumnWidth" class="text-center flex justify-content-around flex-none" pFrozenColumn alignFrozen="left">STT</th>
+
+      <!-- Header tuỳ biến Default, Custom, ... -->
+      <ng-template #defaultHeaderTemplate>
+        <th *ngFor="let col of cols; let i = index" [style.minWidth]="col['width'] || '12rem'">{{ col['header'] }}</th>
+        <th [style.minWidth]="actionColWidth" pFrozenColumn alignFrozen="right"></th>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="customHeaderTemplate ? customHeaderTemplate : defaultHeaderTemplate"></ng-container>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+    <tr [pSelectableRow]="rowData" (dblclick)="rowDblClick(rowData)">
+      <td [style.width]="indexColumnWidth" class="text-center flex justify-content-around flex-none" pFrozenColumn alignFrozen="left">
+        {{ rowIndex + 1 }}
+      </td>
+
+      <!-- Phần chứa dữ liệu trong bảng -->
+      <ng-template #defaultTemplate>
+        <td [style.minWidth]="col.width || '12rem'" *ngFor="let col of cols">
+          {{ rowData[col['field']] }}
+        </td>
+
+        <!-- Khối Edit và Delete một dòng dữ liệu -->
+        <td [style.minWidth]="actionColWidth" pFrozenColumn alignFrozen="right" class="flex justify-content-center">
+          <div class="flex mx-1" class="flex justify-content-center">
+            <button *ngIf="actions.includes(ACTIONS.EDIT)" pButton pRipple icon="pi pi-pencil" class="ml-auto p-button-rounded p-button-warning p-button-outlined ml-2 mr-2 p-button-xs" (click)="onEditItem.emit(rowData)" title="Edit row"></button>
+            <button *ngIf="actions.includes(ACTIONS.DELETE)" pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-outlined p-button-xs" (click)="onDeleteItem.emit(rowData)" title="Delete row"></button>
+            <ng-container *ngTemplateOutlet="additionButtonsTemplate; context: { $implicit: rowData }"></ng-container>
+          </div>
+        </td>
+      </ng-template>
+
+      <ng-container *ngTemplateOutlet="customBodyTemplate ? customBodyTemplate : defaultTemplate; context: { $implicit: rowData }"></ng-container>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage" let-columns>
+    <div class="w-full text-center p-2">Không có dữ liệu.</div>
+  </ng-template>
+</p-table>

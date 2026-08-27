@@ -1,0 +1,71 @@
+.c-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.m-error {
+    position: absolute;
+    bottom: -1.5rem;
+    min-height: 18px;
+    font-size: 0.875rem;
+    color: var(--red-600);
+}
+
+.border-round-4xl {
+    border-radius: 2.5rem;
+}
+
+.custom-disable {
+    background-color: #f5f5f5 !important;
+    color: #808080 !important;
+    cursor: not-allowed !important;
+}
+
+.fs-status-admin {
+    font-size: 1.1rem
+}
+
+.breadcrumb-admin {
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+
+    ul li {
+        cursor: default;
+
+        &:last-child .p-menuitem-text {
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            background-color: var(--surface-hover);
+        }
+
+        .p-menuitem-link {
+            cursor: default;
+
+            .p-menuitem-icon {
+                font-size: 1.2rem;
+                cursor: pointer;
+            }
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    .input-xxl {
+        width: 14rem !important;
+    }
+}
+
+.p-dropdown-item{
+    white-space: normal !important;
+}

@@ -1,0 +1,120 @@
+
+:host {
+  display:block;
+  width:100%;
+  min-height:100vh
+}
+
+.view-main-panel,
+.view-main-area {
+  min-height: 0;
+}
+
+.view-ticket-card .title-input,
+.view-ticket-card .description-input {
+  cursor: default;
+}
+
+.view-ticket-card .description-input {
+  min-height: 110px;
+  resize: none;
+}
+
+#mainImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 240px);
+  object-fit: contain;
+}
+
+#imageThumbs .preview-card {
+  cursor: pointer;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.94);
+}
+
+.image-lightbox.hidden {
+  display: none;
+}
+
+.image-lightbox img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(255,255,255,.12);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+
+/* v1.0.47 - View player uses the same custom controls as Video Preview */
+#videoView .video-shell {
+  position: relative;
+}
+
+#videoView video {
+  display: block;
+  width: 100%;
+  background: #000;
+}
+
+#videoView .video-controls {
+  z-index: 3;
+}
+
+
+/* Angular loading/error states */
+.state-layer {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:12px;
+  color:#444;
+  background:#f5f5f5
+}
+.state-layer.error span { color:#777 }
+.state-layer button {
+  height:36px;
+  padding:0 15px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer
+}
+.spinner {
+  width:30px;
+  height:30px;
+  border:3px solid #ddd;
+  border-top-color:#7b65df;
+  border-radius:50%;
+  animation:view-spin .75s linear infinite
+}
+@keyframes view-spin { to { transform:rotate(360deg) } }
+.media-status-error { color:#b4121f }

@@ -1,0 +1,153 @@
+<main class="review-page">
+  <div class="state-layer" *ngIf="loading">
+    <span class="spinner"></span>
+    <strong>Loading...</strong>
+  </div>
+
+  <div class="state-layer error" *ngIf="!loading && errorMessage">
+    <strong>Unable to load report</strong>
+    <span>{{ errorMessage }}</span>
+    <button type="button" (click)="loadSession()">Try again</button>
+  </div>
+
+  <section
+    #workspace
+    class="workspace"
+    *ngIf="!loading && !errorMessage"
+    (pointermove)="resize($event)"
+    (pointerup)="stopResize()"
+    (pointercancel)="stopResize()">
+
+    <section class="left-column">
+      <ng-container *ngIf="selectedMedia as media; else noMedia">
+        <section id="videoView" class="main-panel view-main-panel" *ngIf="isVideo(media)">
+          <div class="top-bar">
+            <button class="icon-button" type="button" (click)="closeView()">×</button>
+          </div>
+
+          <div class="video-shell" [class.controls-visible]="!isPlaying">
+            <video
+              #video
+              id="video"
+              [src]="media.safePreviewUrl || media.previewUrl || media.url"
+              playsinline
+              preload="metadata"
+              (click)="togglePlay()"
+              (loadedmetadata)="updateVideoState()"
+              (durationchange)="updateVideoState()"
+              (timeupdate)="updateVideoState()"
+              (play)="updateVideoState()"
+              (pause)="updateVideoState()"
+              (error)="handleMediaError('video')">
+            </video>
+
+            <div class="video-controls">
+              <input
+                aria-label="Seek"
+                class="video-seek"
+                type="range"
+                min="0"
+                max="1000"
+                [value]="seekValue"
+                (input)="seek($any($event.target).value)" />
+
+              <div class="video-controls-row">
+                <div class="video-controls-left">
+                  <button class="video-control-btn" type="button" title="Play/Pause (Space/K)" (click)="togglePlay()">
+                    {{ isPlaying ? 'Ⅱ' : '▶' }}
+                  </button>
+                  <button class="video-control-btn" type="button" title="Back 5 seconds (←)" (click)="seekRelative(-5)">↶5</button>
+                  <button class="video-control-btn" type="button" title="Forward 5 seconds (→)" (click)="seekRelative(5)">5↷</button>
+                  <span class="video-time">
+                    <span>{{ formatTime(currentTime) }}</span>
+                    <span>/</span>
+                    <span>{{ formatTime(duration) }}</span>
+                  </span>
+                </div>
+
+                <div class="video-controls-right">
+                  <select class="playback-rate" title="Playback speed" [value]="playbackRate"
+                    (change)="changePlaybackRate($any($event.target).value)">
+                    <option value="0.5">0.5×</option>
+                    <option value="0.75">0.75×</option>
+                    <option value="1">1×</option>
+                    <option value="1.25">1.25×</option>
+                    <option value="1.5">1.5×</option>
+                    <option value="2">2×</option>
+                  </select>
+                  <button class="video-control-btn" type="button" title="Fullscreen (F)" (click)="openFullscreen()">⛶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-strip">
+            <span>{{ durationSeconds }} seconds</span>
+            <span>{{ consoleLogs.length }} console logs</span>
+            <span>{{ actions.length }} actions</span>
+            <span>{{ ticket.annotations?.length || 0 }} annotations</span>
+          </div>
+        </section>
+
+        <section id="screenshotView" class="main-area view-main-area" *ngIf="isImage(media)">
+          <button class="close-button" type="button" (click)="closeView()">×</button>
+
+          <div class="preview-area">
+            <div class="full-shell" role="button" tabindex="0"
+              (click)="lightboxOpen = true" (keydown.enter)="lightboxOpen = true">
+              <img id="mainImage" [src]="media.safePreviewUrl || media.previewUrl || media.url" [alt]="media.fileName"
+                (error)="handleMediaError('image')" />
+            </div>
+          </div>
+
+          <div id="imageThumbs" class="dual-preview-strip" *ngIf="mediaFiles.length > 1">
+            <button
+              type="button"
+              class="preview-card"
+              *ngFor="let file of mediaFiles; let index = index; trackBy: trackByFileName"
+              [class.active]="media.fileName === file.fileName"
+              (click)="selectMedia(file)">
+              <img [src]="file.safePreviewUrl || file.previewUrl || file.url" [alt]="file.fileName" />
+              <span>
+                <b>{{ index === 0 ? 'Screenshot' : 'Full screen' }}</b>
+                <!-- <small>{{ file.fileName }}</small> -->
+              </span>
+            </button>
+          </div>
+        </section>
+      </ng-container>
+
+      <ng-template #noMedia>
+        <section class="main-area view-main-area">
+          <div class="preview-area"><div class="dev-empty">No image or video file.</div></div>
+        </section>
+      </ng-template>
+
+      <section class="ticket-card view-ticket-card">
+        <input class="title-input" readonly [value]="ticket.title || ''" placeholder="Title" />
+        <textarea class="description-input" readonly [value]="ticket.description || ''" placeholder="Description"></textarea>
+        <div class="status" [class.media-status-error]="statusMessage">{{ statusMessage }}</div>
+      </section>
+    </section>
+
+    <div
+      class="workspace-splitter"
+      [class.dragging]="dragging"
+      title="Drag to resize"
+      (pointerdown)="startResize($event)">
+    </div>
+
+    <aside class="devtools-pane">
+      <div #devtoolsRoot class="devtools-root"></div>
+    </aside>
+  </section>
+
+  <div class="image-lightbox" [class.hidden]="!lightboxOpen" (click)="lightboxOpen = false">
+    <button class="image-lightbox-close" type="button" (click)="lightboxOpen = false">×</button>
+    <img
+      *ngIf="selectedMedia as lightboxMedia"
+      [src]="lightboxMedia.safePreviewUrl || lightboxMedia.previewUrl || lightboxMedia.url"
+      [alt]="lightboxMedia.fileName"
+      (click)="$event.stopPropagation()" />
+  </div>
+</main>

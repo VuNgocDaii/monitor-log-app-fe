@@ -1,0 +1,41 @@
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="flex flex-column align-items-center justify-content-center" style="z-index:2">
+        <div
+            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+                <div class="text-center mb-5" [routerLink]="['/']">
+                    <!-- <img src="assets/images/logoDS.png" alt="Image" height="100" class="mb-3"> -->
+                </div>
+
+                <div [formGroup]="loginForm">
+                    <div class="field">
+                        <label for="username" class="block text-900 text-xl font-medium mb-2">Tên đăng nhập</label>
+                        <input id="username" type="text" placeholder="Tên đăng nhập" formControlName="username" autocomplete="off"
+                            (keydown.enter)="login()" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem;">
+                        <div
+                            *ngIf="loginForm.controls['username'].invalid && ((loginForm.controls['username'].dirty && loginForm.controls['username'].touched))">
+                            <div class="l-error" *ngIf="loginForm.controls['username'].hasError('required')">*Username không
+                                được để trống</div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="block text-900 font-medium text-xl mb-2" for="password">Mật khẩu</label>
+                        <p-password autocomplete ="current-password" [feedback]="false" [toggleMask]="true"
+                            formControlName="password" inputId="password" (keydown.enter)="login()"
+                            styleClass=" mb-5 w-full p-password p-component p-inputwrapper p-input-icon-right"
+                            placeholder="Mật khẩu" inputStyleClass=" w-full border-500 p-3 text-base"></p-password>
+                        <div class="l-error"
+                            *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].dirty">
+                            *Mật khẩu không được để trống và từ 8 ký tự trở lên
+                        </div>
+
+                    </div>
+                    <button [disabled]="loading" pButton pRipple label="Đăng nhập" (click)="login()"
+                        class="w-full p-3 text-xl">
+                        <i *ngIf="loading" class="pi pi-spin pi-spinner mr-1" style="font-size: 1rem"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

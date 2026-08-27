@@ -1,0 +1,978 @@
+.devtools-panel {
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:10px;
+  overflow:hidden;
+  color:#252525;
+  font-family:Arial,Helvetica,sans-serif
+}
+
+.devtools-head {
+  height:48px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid #e2e2e2
+}
+
+.devtools-head strong {
+  font-size:15px
+}
+
+.devtools-head-right {
+  font-size:11px;
+  color:#888
+}
+
+.devtools-tabs {
+  height:48px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  gap:2px;
+  border-bottom:1px solid #ddd
+}
+
+.devtab {
+  height:34px;
+  padding:0 9px;
+  border:0;
+  border-radius:7px;
+  background:transparent;
+  color:#555;
+  cursor:pointer
+}
+
+.devtab.active {
+  background:#ebedeb;
+  color:#111;
+  font-weight:600
+}
+
+.devtab span {
+  display:inline-flex;
+  min-width:16px;
+  height:16px;
+  margin-left:4px;
+  padding:0 4px;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  background:#e9e9e9;
+  font-size:10px
+}
+
+.devtools-controls {
+  border-bottom:1px solid #e4e4e4;
+  background:#f2f3f3
+}
+
+.dev-filter-row {
+  height:42px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+
+.dev-filter-row input {
+  min-width:0;
+  flex:1;
+  border:0;
+  background:transparent;
+  outline:0;
+  font-size:13px
+}
+
+.dev-filter-row select {
+  border:0;
+  background:transparent;
+  color:#555;
+  outline:0
+}
+
+.search-icon {
+  font-size:22px;
+  color:#777
+}
+
+.errors-only {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:12px;
+  color:#555
+}
+
+.network-kinds,.action-chips {
+  padding:7px 12px;
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  background:#fff
+}
+
+.network-kinds button,.action-chips button {
+  height:27px;
+  padding:0 10px;
+  border:0;
+  border-radius:7px;
+  background:#f1f1f1;
+  color:#444;
+  cursor:pointer;
+  font-size:12px
+}
+
+.network-kinds button.active {
+  background:#192020;
+  color:#fff
+}
+
+.devtools-content {
+  min-height:0;
+  flex:1;
+  overflow:auto;
+  background:#fff;
+  font-size:12px
+}
+
+.dev-empty {
+  padding:36px;
+  text-align:center;
+  color:#999
+}
+
+.info-url {
+  margin:12px;
+  padding:9px 10px;
+  display:grid;
+  grid-template-columns:115px 1fr;
+  gap:10px;
+  border:1px solid #d9ddd6;
+  border-radius:8px
+}
+
+.info-url span {
+  color:#777
+}
+
+.info-url a {
+  overflow-wrap:anywhere;
+  color:#0875d1
+}
+
+.info-grid {
+  padding:0 14px 18px;
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:13px 10px
+}
+
+.info-grid span {
+  color:#777
+}
+
+.info-grid b {
+  font-weight:500;
+  overflow-wrap:anywhere
+}
+
+.network-table-wrap {
+  overflow:auto
+}
+
+.network-table {
+  width:100%;
+  border-collapse:collapse;
+  white-space:nowrap;
+  font-size:11px
+}
+
+.network-table th,.network-table td {
+  height:25px;
+  padding:3px 5px;
+  border-right:1px solid #e5e5e5;
+  border-bottom:1px solid #ececec;
+  text-align:left;
+  max-width:180px;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.network-table th {
+  position:sticky;
+  top:0;
+  z-index:1;
+  background:#fff;
+  color:#666;
+  font-weight:500
+}
+
+.network-table tbody tr:nth-child(even) {
+  background:#f3f3f3
+}
+
+.network-table .network-error {
+  background:#ffdfe2!important;
+  color:#b4121f
+}
+
+.waterfall {
+  display:block;
+  width:var(--w);
+  height:7px;
+  background:#b4a6f4;
+  border:1px solid #9285d4
+}
+
+.console-row,.action-row {
+  min-height:26px;
+  padding:4px 8px;
+  display:grid;
+  align-items:start;
+  border-bottom:1px solid #ececec
+}
+
+.console-row {
+  grid-template-columns:42px 54px 1fr;
+  gap:6px
+}
+
+.console-time,.action-time {
+  color:#777;
+  font-family:monospace
+}
+
+.console-level {
+  font-weight:600
+}
+
+.console-message {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
+
+.level-error {
+  background:#ffe3e6;
+  color:#ae1725
+}
+
+.level-warn {
+  background:#fff2cf
+}
+
+.action-row {
+  grid-template-columns:44px 22px 1fr;
+  gap:4px;
+  line-height:1.45
+}
+
+.action-row a {
+  color:#2278cb;
+  overflow-wrap:anywhere
+}
+
+.action-row code {
+  color:#be3864;
+  background:transparent
+}
+
+.action-navigation {
+  background:#eef7ff
+}
+
+.action-error {
+  background:#ffe1e5;
+  color:#c11727
+}
+
+.action-video {
+  background:#fafafa
+}
+
+.backend-placeholder {
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  color:#777
+}
+
+.backend-placeholder strong {
+  color:#222
+}
+
+/* v0.1.2 - DevTools request detail inspector */
+.network-layout {
+  height:100%;
+  min-height:0;
+  display:grid;
+  grid-template-rows:minmax(220px,46%) minmax(240px,54%);
+  overflow:hidden
+}
+
+.network-list-pane {
+  min-height:0;
+  overflow:auto;
+  border-bottom:1px solid #dcdcdc
+}
+
+.network-detail-pane {
+  min-height:0;
+  overflow:auto;
+  background:#fff
+}
+
+.network-table tbody tr {
+  cursor:pointer
+}
+
+.network-table tbody tr:hover td {
+  background:#eef6ff
+}
+
+.network-table tbody tr.network-selected td {
+  background:#dcecff!important
+}
+
+.network-detail {
+  min-height:100%;
+  display:flex;
+  flex-direction:column
+}
+
+.network-detail-title {
+  padding:9px 10px;
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  border-bottom:1px solid #e2e2e2;
+  font-size:11px
+}
+
+.network-detail-title span {
+  color:#666;
+  overflow-wrap:anywhere
+}
+
+.network-detail-tabs {
+  min-height:36px;
+  padding:0 8px;
+  display:flex;
+  align-items:end;
+  gap:2px;
+  border-bottom:1px solid #ddd;
+  overflow-x:auto
+}
+
+.network-detail-tabs button {
+  height:34px;
+  padding:0 9px;
+  border:0;
+  border-bottom:2px solid transparent;
+  background:transparent;
+  color:#555;
+  font-size:11px;
+  cursor:pointer;
+  white-space:nowrap
+}
+
+.network-detail-tabs button.active {
+  border-bottom-color:#2e7dd7;
+  color:#111;
+  font-weight:600
+}
+
+.network-detail-body {
+  min-height:0;
+  padding:8px 10px 18px;
+  overflow:auto
+}
+
+.network-detail-empty {
+  padding:24px;
+  color:#888;
+  font-size:12px
+}
+
+.network-detail-section {
+  margin-bottom:14px
+}
+
+.network-detail-section h4 {
+  margin:0 0 6px;
+  padding-bottom:4px;
+  border-bottom:1px solid #eee;
+  font-size:12px
+}
+
+.network-kv {
+  display:flex;
+  flex-direction:column;
+  gap:1px
+}
+
+.network-kv-row {
+  display:grid;
+  grid-template-columns:minmax(120px,34%) 1fr;
+  gap:8px;
+  padding:3px 4px;
+  font-size:11px
+}
+
+.network-kv-row b {
+  color:#333;
+  overflow-wrap:anywhere
+}
+
+.network-kv-row span {
+  color:#555;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap
+}
+
+.network-code {
+  max-height:420px;
+  margin:0;
+  padding:10px;
+  overflow:auto;
+  border:1px solid #ddd;
+  border-radius:5px;
+  background:#f8f8f8;
+  color:#222;
+  font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
+
+.network-body-error {
+  padding:10px;
+  border:1px solid #efb2b9;
+  border-radius:5px;
+  background:#ffe7e9;
+  color:#a31826;
+  font-size:11px
+}
+
+.network-body-warning {
+  margin-bottom:7px;
+  padding:7px 9px;
+  border-radius:5px;
+  background:#fff3cd;
+  color:#705d00;
+  font-size:11px
+}
+
+.console-source {
+  margin-top:3px;
+  color:#6e87a1;
+  font-size:10px;
+  overflow-wrap:anywhere
+}
+
+/* v0.1.8 - Chrome DevTools-like network layout */
+.devtools-panel {
+  border-radius:0;
+  border-color:#d8d8d8
+}
+
+.devtools-head {
+  height:42px
+}
+
+.devtools-tabs {
+  height:40px
+}
+
+.devtools-controls {
+  background:#f5f5f5
+}
+
+.network-layout {
+  grid-template-rows:minmax(260px,58%) minmax(220px,42%);
+}
+
+.network-table {
+  table-layout:auto;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+.network-table th {
+  height:24px;
+  background:#fafafa;
+  border-bottom:1px solid #d7d7d7;
+}
+
+.network-table td {
+  height:22px;
+  padding-top:2px;
+  padding-bottom:2px;
+}
+
+.network-table th:nth-child(2), .network-table td:nth-child(2) {
+  min-width:150px;
+}
+
+.network-table th:nth-child(7), .network-table td:nth-child(7) {
+  min-width:90px;
+  max-width:140px;
+}
+
+.network-detail-tabs {
+  background:#fafafa;
+}
+
+.network-detail-body {
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+.network-code {
+  background:#fff;
+  border:0;
+  border-radius:0;
+  font-size:11px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* v0.2.2 - DevTools / Console visual refresh                                 */
+/* -------------------------------------------------------------------------- */
+.devtools-panel {
+  background: #ffffff;
+  border: 1px solid #dfe3e8;
+  color: #202124;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.devtools-head {
+  height: 44px;
+  padding: 0 14px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.devtools-head strong {
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.1px;
+}
+
+.devtools-head-right {
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: #f5f6f7;
+  color: #8a9099;
+  font-size: 10px;
+}
+
+.devtools-tabs {
+  height: 40px;
+  padding: 0 8px;
+  gap: 2px;
+  background: #ffffff;
+  border-bottom: 1px solid #e4e7eb;
+}
+
+.devtab {
+  position: relative;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: #5f6368;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.devtab:hover {
+  background: #f5f6f7;
+  color: #202124;
+}
+
+.devtab.active {
+  background: #eef0f2;
+  color: #111827;
+  font-weight: 650;
+}
+
+.devtab.active::after {
+  content: "";
+  position: absolute;
+  right: 9px;
+  bottom: -5px;
+  left: 9px;
+  height: 2px;
+  border-radius: 2px;
+  background: #5f6368;
+}
+
+.devtab span {
+  min-width: 18px;
+  height: 18px;
+  margin-left: 5px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #e7e9ec;
+  color: #60656d;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.devtools-controls {
+  background: #f7f8f9;
+  border-bottom: 1px solid #e6e8eb;
+}
+
+.dev-filter-row {
+  height: 42px;
+  padding: 0 12px;
+  gap: 9px;
+}
+
+.search-icon {
+  width: 18px;
+  overflow: hidden;
+  color: #7b818a;
+  font-size: 19px;
+}
+
+.dev-filter-row input {
+  height: 30px;
+  padding: 0 4px;
+  color: #30343a;
+  font-size: 12px;
+}
+
+.dev-filter-row input::placeholder {
+  color: #9ba0a8;
+}
+
+.dev-filter-row select {
+  height: 30px;
+  padding: 0 4px;
+  color: #60656d;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.devtools-content {
+  background: #ffffff;
+}
+
+/* Console */
+.console-list {
+  width: 100%;
+  min-width: 0;
+}
+
+.console-row {
+  min-height: 52px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 50px 24px minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+  border-bottom: 1px solid #edf0f2;
+  background: #ffffff;
+  color: #262a30;
+}
+
+.console-row:hover {
+  background: #f8fafc;
+}
+
+.console-row.level-error {
+  background: #fff7f7;
+  color: #8f1f28;
+}
+
+.console-row.level-error:hover {
+  background: #fff0f1;
+}
+
+.console-row.level-warn, .console-row.level-warning {
+  background: #fffbf2;
+}
+
+.console-row.level-warn:hover, .console-row.level-warning:hover {
+  background: #fff7df;
+}
+
+.console-gutter {
+  padding: 13px 7px 10px 10px;
+  background: rgba(246, 247, 248, 0.72);
+  border-right: 1px solid #edf0f2;
+}
+
+.console-time {
+  display: block;
+  color: #8c929a;
+  font: 10px/1.35 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  white-space: nowrap;
+}
+
+.console-level-icon {
+  width: 18px;
+  height: 18px;
+  margin: 12px 3px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9dde2;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #757b84;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.console-level-icon.icon-error {
+  border-color: #e9606d;
+  background: #e64957;
+  color: #ffffff;
+}
+
+.console-level-icon.icon-warn, .console-level-icon.icon-warning {
+  border-color: #e2b64c;
+  background: #f7c95a;
+  color: #5c4300;
+}
+
+.console-level-icon.icon-debug {
+  border-color: #9a7de0;
+  background: #f4efff;
+  color: #7452c6;
+}
+
+.console-level-icon.icon-info {
+  border-color: #73a5de;
+  background: #eef6ff;
+  color: #3475b9;
+}
+
+.console-entry {
+  min-width: 0;
+  padding: 9px 12px 10px 8px;
+}
+
+.console-entry-top {
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.console-level-badge {
+  display: inline-flex;
+  height: 19px;
+  padding: 0 6px;
+  align-items: center;
+  border-radius: 5px;
+  background: #f0f2f4;
+  color: #59606a;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.35px;
+}
+
+.console-level-badge.badge-error {
+  background: #ffe1e4;
+  color: #b32632;
+}
+
+.console-level-badge.badge-warn, .console-level-badge.badge-warning {
+  background: #fff0c7;
+  color: #8b6500;
+}
+
+.console-level-badge.badge-debug {
+  background: #efe9ff;
+  color: #6844bd;
+}
+
+.console-level-badge.badge-info {
+  background: #e7f2ff;
+  color: #286eaf;
+}
+
+.console-source {
+  min-width: 0;
+  max-width: 65%;
+  margin-left: auto;
+  overflow: hidden;
+  color: #7790ac;
+  font: 10px/1.3 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.console-source:hover {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+.console-message {
+  max-height: 120px;
+  margin: 5px 0 0;
+  padding: 0;
+  overflow: auto;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  font: 11px/1.52 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+}
+
+.console-message.structured {
+  max-height: 180px;
+  padding: 8px 9px;
+  border: 1px solid #e2e5e9;
+  border-radius: 6px;
+  background: #f8f9fa;
+  color: #31363d;
+}
+
+.console-message::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.console-message::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #c7ccd2;
+}
+
+.console-empty {
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.console-empty-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #f2f4f6;
+  color: #69717a;
+  font: 15px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.console-empty strong {
+  color: #555b63;
+  font-size: 12px;
+}
+
+.console-empty span {
+  color: #989da4;
+  font-size: 11px;
+}
+
+/* Keep long console JSON from making the whole right pane unusably tall. */
+@media (max-width: 1200px) {
+  .console-row {
+    grid-template-columns: 44px 22px minmax(0, 1fr);
+  }
+  .console-entry {
+    padding-right: 8px;
+  }
+  .console-source {
+    max-width: 48%;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* v1.0.4 - Network detail auto-open + resizable height                       */
+/* -------------------------------------------------------------------------- */
+.network-layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  overflow: hidden;
+}
+
+/* Before a request is selected, use the entire panel for the request list. */
+.network-layout.list-only {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.network-layout.list-only .network-list-pane {
+  border-bottom: 0;
+}
+
+/* After selecting a request, automatically reveal the detail pane. */
+.network-layout.has-detail {
+  grid-template-rows: minmax( 120px, calc( 100% - var( --network-detail-height, 42% ) - 7px ) ) 7px minmax( 120px, var( --network-detail-height, 42% ) );
+}
+
+.network-list-pane, .network-detail-pane {
+  min-height: 0;
+}
+
+.network-list-pane {
+  overflow: auto;
+  border-bottom: 0;
+}
+
+.network-detail-pane {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.network-horizontal-splitter {
+  position: relative;
+  z-index: 4;
+  height: 7px;
+  cursor: row-resize;
+  background: #f2f3f5;
+  border-top: 1px solid #dfe3e8;
+  border-bottom: 1px solid #dfe3e8;
+  touch-action: none;
+}
+
+.network-horizontal-splitter:hover, .network-horizontal-splitter.dragging {
+  background: #dcecff;
+}
+
+.network-horizontal-splitter span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: #aeb5bd;
+}
+
+.network-horizontal-splitter:hover span, .network-horizontal-splitter.dragging span {
+  background: #4c8ed9;
+}
+
+.network-detail {
+  height: 100%;
+  min-height: 0;
+}
+
+.network-detail-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+/* v1.0.6 - remove payload column from network list */
+.network-table th:nth-child(7), .network-table td:nth-child(7) {
+  min-width: unset;
+  max-width: unset;
+}
+

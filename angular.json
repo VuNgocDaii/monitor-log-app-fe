@@ -1,0 +1,152 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "fta-index": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "style": "scss",
+                    "skipTests": true
+                },
+                "@schematics/angular:class": {
+                    "skipTests": true
+                },
+                "@schematics/angular:directive": {
+                    "skipTests": true
+                },
+                "@schematics/angular:guard": {
+                    "skipTests": true
+                },
+                "@schematics/angular:pipe": {
+                    "skipTests": true
+                },
+                "@schematics/angular:service": {
+                    "skipTests": true
+                }
+            },
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist/fta-index",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            "src/html",
+                            "src/manifest.json",
+                            "src/firebase-messaging-sw.js"
+                        ],
+                        "styles": [
+                            "src/styles.scss",
+                            "node_modules/quill/dist/quill.core.css",
+                            "node_modules/quill/dist/quill.snow.css"
+                        ],
+                        "scripts": [
+                            "node_modules/prismjs/prism.js",
+                            "node_modules/prismjs/components/prism-typescript.js",
+                            "node_modules/quill/dist/quill.js",
+                            "node_modules/chart.js/dist/chart.js",
+                            "node_modules/pdfmake/build/pdfmake.js"
+                        ],
+                        "allowedCommonJsDependencies": [
+                            "chart.js"
+                        ]
+                    },
+                    "configurations": {
+                        "production": {
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "3mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ],
+                            "fileReplacements": [],
+                            "outputHashing": "all"
+                        },
+                        "development": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true,
+                            "fileReplacements": []
+                        },
+                        "staging": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true,
+                            "fileReplacements": []
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "fta-index:build:production"
+                        },
+                        "development": {
+                            "browserTarget": "fta-index:build:development"
+                        },
+                        "staging": {
+                            "browserTarget": "fta-index:build:staging"
+                        }
+                    },
+                    "defaultConfiguration": "development"
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "fta-index:build"
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "src/test.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "tsconfig.spec.json",
+                        "karmaConfig": "karma.conf.js",
+                        "inlineStyleLanguage": "scss",
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            "src/manifest.json",
+                            "src/firebase-messaging-sw.js",
+                            "node-modules/pdfmake/build/pdfmake.js"
+                        ],
+                        "styles": [
+                            "src/styles.scss"
+                        ],
+                        "scripts": []
+                    }
+                }
+            }
+        }
+    },
+    "defaultProject": "fta-index",
+    "cli": {
+        "analytics": false
+    }
+}
