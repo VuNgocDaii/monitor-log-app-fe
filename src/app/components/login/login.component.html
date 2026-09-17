@@ -22,14 +22,26 @@
                         <label class="block text-900 font-medium text-xl mb-2" for="password">Mật khẩu</label>
                         <p-password autocomplete ="current-password" [feedback]="false" [toggleMask]="true"
                             formControlName="password" inputId="password" (keydown.enter)="login()"
-                            styleClass=" mb-5 w-full p-password p-component p-inputwrapper p-input-icon-right"
+                            styleClass=" w-full p-password p-component p-inputwrapper p-input-icon-right"
                             placeholder="Mật khẩu" inputStyleClass=" w-full border-500 p-3 text-base"></p-password>
-                        <div class="l-error"
-                            *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].dirty">
-                            *Mật khẩu không được để trống và từ 8 ký tự trở lên
-                        </div>
+                       <div class="password-footer mt-2">
+                            <div class="password-error">
+                                <span
+                                    *ngIf="loginForm.controls['password'].invalid &&
+                                        loginForm.controls['password'].dirty">
+                                    *Mật khẩu không được để trống và từ 8 ký tự trở lên
+                                </span>
+                            </div>
 
+                            <a
+                                routerLink="/forgot-password"
+                                class="forgot-password">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
+                        
                     </div>
+                     
                     <button [disabled]="loading" pButton pRipple label="Đăng nhập" (click)="login()"
                         class="w-full p-3 text-xl">
                         <i *ngIf="loading" class="pi pi-spin pi-spinner mr-1" style="font-size: 1rem"></i>

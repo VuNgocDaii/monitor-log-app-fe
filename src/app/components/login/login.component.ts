@@ -44,28 +44,35 @@ export class LoginComponent implements OnInit, OnDestroy {
   login(): void {
     this.sub = this.authService.login(this.loginForm.value).subscribe(
       (res) => {
-        if (res.isValid) {
-          localStorage.setItem(StorageKeys.TOKEN, res.jsonData.token);
-          localStorage.setItem(StorageKeys.USER, JSON.stringify(res.jsonData));
-          this.authState.dispatch(res.jsonData);
-          console.log(this.returnUrl);
-
-          if (this.returnUrl == 'home') {
-            this.router.navigate(['/']);
-          } else {
-            this.router.navigate(['/admin']);
-          }
-        } else {
-          this.notification.error('Lỗi đăng nhập', res.errors[0].errorMessage);
+      //   if (!res.status) {
+      //     localStorage.setItem(StorageKeys.TOKEN, res.jsonData.token);
+      //     localStorage.setItem(StorageKeys.USER, JSON.stringify(res.jsonData));
+      //     this.authState.dispatch(res.jsonData);
+      //     console.log(this.returnUrl);
+          
+      //   // if (this.returnUrl == 'home') {
+      //   //     this.router.navigate(['/']);
+      //   //   } else {
+      //   //     this.router.navigate(['/admin']);
+      //   //   }
+      //   } else {
+      //     this.notification.error('Lỗi đăng nhập', res.status);
+      //   }
+      // },
+      // (error) => {
+      //   if (error.error && error.error.message) {
+      //     this.messageError = error.error.message;
+      //     this.notification.error('Lỗi đăng nhập', 'Tên đăng nhập hoặc mật khẩu không đúng!');
+      //   } else {
+      //     this.messageError = StorageKeys.LOGIN_FAIL;
+      //     this.notification.error('Lỗi đăng nhập', StorageKeys.LOGIN_FAIL);
+      //   }
+        if (res.status) {
+          this.notification.error('Lỗi đăng nhập', res.status);
         }
-      },
-      (error) => {
-        if (error.error && error.error.message) {
-          this.messageError = error.error.message;
-          this.notification.error('Lỗi đăng nhập', 'Tên đăng nhập hoặc mật khẩu không đúng!');
-        } else {
-          this.messageError = StorageKeys.LOGIN_FAIL;
-          this.notification.error('Lỗi đăng nhập', StorageKeys.LOGIN_FAIL);
+        else {
+          console.log("run here");
+          this.router.navigate(['/workspace']);
         }
       },
     );

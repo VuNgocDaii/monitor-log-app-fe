@@ -60,6 +60,30 @@
     color: var(--red-600);
 }
 
+.password-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 16px;
+    width: 100%;
+}
+
+.password-error {
+    color: #f44336;
+    font-size: 11px;
+    line-height: 20px;
+    text-align: left;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 20px;
+    text-decoration: none;
+    text-align: right;
+    cursor: pointer;
+}
 @media (max-width: 768px) {
   .login-form {
     width: 100%;
@@ -91,3 +115,4 @@
     display: block !important;
   }
 }
+

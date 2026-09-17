@@ -29,6 +29,12 @@ import { Constants, Roles } from './shared/constants/constants';
                         ),
                 },
                 {
+                    path: 'workspace',
+                    loadChildren: () =>
+                        import('./components/workspace/workspace.module')
+                            .then((m) => m.WorkspaceModule),
+                },
+                {
                     path: '403',
                     loadChildren: () =>
                         import(

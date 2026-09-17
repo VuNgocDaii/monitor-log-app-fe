@@ -1,0 +1,162 @@
+:host {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  color: #ededed;
+  background: #202020;
+}
+
+.content-header {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 46px;
+  padding: 0 16px 0 20px;
+  background: rgba(32, 32, 32, 0.96);
+}
+
+.breadcrumb,
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.breadcrumb strong {
+  font-size: 14px;
+}
+
+.private-label,
+.edited-time {
+  color: #838383;
+  font-size: 13px;
+}
+
+.private-label i {
+  font-size: 11px;
+}
+
+.header-actions button {
+  padding: 5px;
+  color: #e7e7e7;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.page {
+  box-sizing: border-box;
+  min-height: calc(100% - 46px);
+  padding: 88px clamp(24px, 8vw, 150px) 120px;
+}
+
+.page-inner {
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
+.page-emoji {
+  margin-bottom: 24px;
+  font-size: 72px;
+  line-height: 1;
+}
+
+h1 {
+  margin: 0 0 26px;
+  color: #f4f4f4;
+  font-size: clamp(34px, 4vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -1px;
+}
+
+.checklist {
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 8px 0;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checklist-item.nested {
+  margin-left: 32px;
+}
+
+.checklist-item.completed span {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.checklist-item input {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: #2383e2;
+}
+
+.toggle-block {
+  margin-top: 10px;
+}
+
+.toggle-block summary {
+  cursor: pointer;
+}
+
+.toggle-block p,
+.empty-description {
+  color: #aaa;
+}
+
+.empty-icon {
+  display: block;
+  margin-bottom: 24px;
+  color: #cfcfcf;
+  font-size: 58px;
+}
+
+.help-button {
+  position: fixed;
+  right: 20px;
+  bottom: 28px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #191919;
+  background: #eee;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .edited-time,
+  .private-label {
+    display: none;
+  }
+
+  .page {
+    padding: 58px 24px 90px;
+  }
+
+  .page-emoji {
+    font-size: 56px;
+  }
+}

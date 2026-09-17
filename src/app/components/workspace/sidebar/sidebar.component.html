@@ -1,0 +1,80 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed">
+  <header class="workspace-header">
+    <div class="workspace-avatar">V</div>
+    <strong class="workspace-name">Vũ Ngọc Đại's Space</strong>
+
+    <button
+      type="button"
+      class="header-button"
+      [attr.aria-label]="collapsed ? 'Mở sidebar' : 'Thu gọn sidebar'"
+      (click)="toggleSidebar()"
+    >
+      <i [class]="collapsed ? 'pi pi-angle-double-right' : 'pi pi-angle-double-left'"></i>
+    </button>
+  </header>
+
+  <div class="quick-menu">
+    <button type="button" class="quick-item active">
+      <i class="pi pi-home"></i>
+      <span class="sidebar-label">Home</span>
+    </button>
+
+    <button type="button" class="quick-icon" aria-label="Tin nhắn">
+      <i class="pi pi-comment"></i>
+    </button>
+    <button type="button" class="quick-icon" aria-label="Ghi âm">
+      <i class="pi pi-microphone"></i>
+    </button>
+    <button type="button" class="quick-icon" aria-label="Hộp thư">
+      <i class="pi pi-inbox"></i>
+    </button>
+    <button type="button" class="quick-icon search-button" aria-label="Tìm kiếm">
+      <i class="pi pi-search"></i>
+    </button>
+  </div>
+
+  <nav class="navigation" aria-label="Workspace navigation">
+    <section *ngFor="let section of sections" class="menu-section">
+      <p class="section-title">{{ section.title }}</p>
+
+      <button
+        *ngFor="let item of section.items"
+        type="button"
+        class="menu-item"
+        [class.active]="activeItemId === item.id"
+        [attr.title]="collapsed ? item.label : null"
+        (click)="selectItem(item)"
+      >
+        <i class="menu-icon" [ngClass]="item.icon"></i>
+        <span class="sidebar-label">{{ item.label }}</span>
+      </button>
+
+      <button *ngIf="section.allowAdd" type="button" class="menu-item add-item">
+        <i class="pi pi-plus menu-icon"></i>
+        <span class="sidebar-label">Add new</span>
+      </button>
+    </section>
+  </nav>
+
+  <footer class="sidebar-footer">
+    <div class="invite-card">
+      <i class="pi pi-user-plus"></i>
+      <div class="invite-content">
+        <strong>Invite members</strong>
+        <small>Collaborate with your team.</small>
+      </div>
+      <button type="button" aria-label="Đóng"><i class="pi pi-times"></i></button>
+    </div>
+
+    <div class="new-chat-wrapper">
+      <button type="button" class="new-chat">
+        <i class="pi pi-star"></i>
+        <span class="sidebar-label">New chat</span>
+        <kbd>Ctrl+O</kbd>
+      </button>
+      <button type="button" class="compose-button" aria-label="Tạo mới">
+        <i class="pi pi-pencil"></i>
+      </button>
+    </div>
+  </footer>
+</aside>
