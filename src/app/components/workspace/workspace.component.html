@@ -1,11 +1,13 @@
 <div class="workspace">
   <app-sidebar
+    [currentUser]="currentUser"
     [activeItemId]="selectedItem.id"
     (itemSelected)="onMenuItemSelected($event)"
     (collapsedChange)="onSidebarCollapsed($event)"
   ></app-sidebar>
 
   <app-content
+    [currentUser]="currentUser"
     [selectedItem]="selectedItem"
     [sidebarCollapsed]="sidebarCollapsed"
   ></app-content>

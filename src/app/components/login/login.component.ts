@@ -72,6 +72,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
         else {
           console.log("run here");
+          localStorage.setItem(StorageKeys.TOKEN, res.accessToken);
+          // localStorage.setItem(StorageKeys.USER, JSON.stringify(res.jsonData));
+          // this.authState.dispatch(res.jsonData);
           this.router.navigate(['/workspace']);
         }
       },

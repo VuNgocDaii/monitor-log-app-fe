@@ -20,7 +20,7 @@ export class ContentComponent {
   };
 
   @Input() sidebarCollapsed = false;
-
+  @Input() currentUser: any = null;
   readonly checklist: ChecklistItem[] = [
     { label: 'Create an account with Notion', completed: true },
     { label: 'Click anywhere below and type / to see what you can create – headers, tables, to-do’s, etc.', completed: false },

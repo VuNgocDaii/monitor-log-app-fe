@@ -1,19 +1,15 @@
 <aside class="sidebar" [class.sidebar--collapsed]="collapsed">
   <header class="workspace-header">
-    <div class="workspace-avatar">V</div>
-    <strong class="workspace-name">Vũ Ngọc Đại's Space</strong>
+    <!-- <div class="workspace-avatar">V</div> -->
+    <strong class="workspace-name">{{ currentUser?.fullName }}'s Space</strong>
 
-    <button
-      type="button"
-      class="header-button"
-      [attr.aria-label]="collapsed ? 'Mở sidebar' : 'Thu gọn sidebar'"
-      (click)="toggleSidebar()"
-    >
+    <button type="button" class="header-button" [attr.aria-label]="collapsed ? 'Mở sidebar' : 'Thu gọn sidebar'"
+      (click)="toggleSidebar()">
       <i [class]="collapsed ? 'pi pi-angle-double-right' : 'pi pi-angle-double-left'"></i>
     </button>
   </header>
 
-  <div class="quick-menu">
+  <!-- <div class="quick-menu">
     <button type="button" class="quick-item active">
       <i class="pi pi-home"></i>
       <span class="sidebar-label">Home</span>
@@ -31,32 +27,117 @@
     <button type="button" class="quick-icon search-button" aria-label="Tìm kiếm">
       <i class="pi pi-search"></i>
     </button>
-  </div>
+  </div> -->
 
-  <nav class="navigation" aria-label="Workspace navigation">
+  <nav class="navigation" aria-label="Workspace navigation" (scroll)="closeProjectMenu()">
     <section *ngFor="let section of sections" class="menu-section">
-      <p class="section-title">{{ section.title }}</p>
+      <div class="project-section-heading">
+        <p class="section-title">{{ section.title }}</p>
+        <button *ngIf="section.id === 'projects'" type="button" class="project-filter-button"
+          [class.is-archived]="projectStatusFilter === 'archived'"
+          [attr.aria-label]="projectStatusFilter === 'active' ? 'Xem dự án đã lưu trữ' : 'Xem dự án đang hoạt động'"
+          [attr.title]="projectStatusFilter === 'active' ? 'Xem dự án đã lưu trữ' : 'Xem dự án đang hoạt động'"
+          (click)="toggleProjectStatusFilter()">
+          <i class="pi" [ngClass]="projectStatusFilter === 'active' ? 'pi-inbox' : 'pi-folder-open'"></i>
+          <span class="sidebar-label">{{ projectStatusFilter === 'active' ? 'Đã lưu trữ' : 'Đang hoạt động' }}</span>
+        </button>
+      </div>
+      <p *ngIf="section.id === 'projects' && projectStatusFilter === 'archived' && !collapsed"
+        class="project-list-caption">Dự án đã lưu trữ</p>
 
-      <button
-        *ngFor="let item of section.items"
-        type="button"
-        class="menu-item"
-        [class.active]="activeItemId === item.id"
-        [attr.title]="collapsed ? item.label : null"
-        (click)="selectItem(item)"
-      >
-        <i class="menu-icon" [ngClass]="item.icon"></i>
-        <span class="sidebar-label">{{ item.label }}</span>
-      </button>
+      <div *ngFor="let item of section.items; trackBy: trackMenuItem" class="project-row"
+        [class.active]="activeItemId === item.id">
+        <button type="button" class="menu-item project-main-button" [class.active]="activeItemId === item.id"
+          [attr.title]="item.label" [attr.aria-label]="item.label"
+          [attr.aria-current]="activeItemId === item.id ? 'page' : null" (click)="selectItem(item)">
+          <i class="menu-icon" [ngClass]="item.icon"></i>
+          <span class="sidebar-label">{{ item.label }}</span>
+        </button>
+        <button *ngIf="item.projectId" type="button" class="project-more-button"
+          [attr.aria-label]="'Thao tác với dự án ' + item.label" [attr.title]="'Thao tác với dự án ' + item.label"
+          aria-haspopup="menu" [attr.aria-expanded]="openedProjectMenu?.id === item.id"
+          [attr.aria-controls]="openedProjectMenu?.id === item.id ? 'sidebar-project-actions' : null"
+          (click)="toggleProjectMenu($event, item)">
+          <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
+        </button>
+      </div>
 
-      <button *ngIf="section.allowAdd" type="button" class="menu-item add-item">
+      <ng-container *ngIf="section.id === 'projects'">
+        <p *ngIf="loadingProjects" class="project-feedback" role="status" title="Đang tải project">
+          <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+          <span class="sidebar-label">Đang tải project...</span>
+        </p>
+
+        <div *ngIf="projectListError" class="project-load-error">
+          <p class="project-feedback project-feedback--error" role="alert" [attr.title]="projectListError">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            <span class="sidebar-label">{{ projectListError }}</span>
+          </p>
+          <button type="button" class="menu-item" aria-label="Tải lại danh sách project" [disabled]="loadingProjects"
+            (click)="retryLoadProjects()">
+            <i class="pi pi-refresh menu-icon"></i>
+            <span class="sidebar-label">Thử lại</span>
+          </button>
+        </div>
+
+        <p *ngIf="!loadingProjects && !projectListError && !section.items.length" class="project-feedback"
+          title="Chưa có project" role="status">
+          <i class="pi pi-folder-open" aria-hidden="true"></i>
+          <span class="sidebar-label">{{ projectStatusFilter === 'archived' ? 'Chưa có dự án đã lưu trữ' : 'Chưa có
+            project' }}</span>
+        </p>
+
+        <button *ngIf="hasMoreProjects && !projectListError" type="button" class="menu-item"
+          [disabled]="loadingProjects" aria-label="Xem thêm project" (click)="loadProjects()">
+          <i class="pi pi-angle-down menu-icon"></i>
+          <span class="sidebar-label">Xem thêm</span>
+        </button>
+      </ng-container>
+
+      <button *ngIf="section.allowAdd" #addProjectButton type="button" class="menu-item add-item"
+        aria-label="Tạo project mới" [attr.title]="collapsed ? 'Tạo project mới' : null"
+        [attr.aria-expanded]="showCreateProject && !collapsed" aria-controls="sidebar-create-project"
+        (click)="openCreateProject()">
         <i class="pi pi-plus menu-icon"></i>
         <span class="sidebar-label">Add new</span>
       </button>
+
+      <form *ngIf="section.id === 'projects' && showCreateProject && !collapsed" id="sidebar-create-project"
+        class="project-create-form" novalidate [attr.aria-busy]="creatingProject" aria-labelledby="sidebar-create-title"
+        (submit)="createProject($event)" (keydown.escape)="closeCreateProject()">
+        <strong id="sidebar-create-title" class="project-form-title">Tạo project</strong>
+
+        <label for="sidebar-project-name">Tên project <span aria-hidden="true">*</span></label>
+        <input #projectNameInput id="sidebar-project-name" name="projectName" type="text" maxlength="255" required
+          autocomplete="off" placeholder="" [value]="newProjectName" [disabled]="creatingProject"
+          (input)="newProjectName = projectNameInput.value" />
+
+        <label for="sidebar-project-key">Mã project <span aria-hidden="true">*</span></label>
+        <input #projectKeyInput id="sidebar-project-key" name="projectKey" type="text" maxlength="20" required
+          autocomplete="off" placeholder="" aria-describedby="sidebar-project-key-hint"
+          [value]="newProjectKey" [disabled]="creatingProject" (input)="newProjectKey = projectKeyInput.value" />
+        <!-- <small id="sidebar-project-key-hint">Mã được viết hoa và cố định sau khi tạo.</small> -->
+
+        <label for="sidebar-project-description">Mô tả</label>
+        <textarea #projectDescriptionInput id="sidebar-project-description" name="description" rows="3"
+          placeholder="" [value]="newProjectDescription" [disabled]="creatingProject"
+          (input)="newProjectDescription = projectDescriptionInput.value"></textarea>
+
+        <p *ngIf="createProjectError" class="project-form-error" role="alert">{{ createProjectError }}</p>
+
+        <div class="project-form-actions">
+          <button type="button" class="project-cancel-button" [disabled]="creatingProject"
+            (click)="closeCreateProject()">Hủy</button>
+          <button type="submit" class="project-save-button" [disabled]="creatingProject">
+            <i *ngIf="creatingProject" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            {{ creatingProject ? 'Đang tạo...' : 'Tạo project' }}
+          </button>
+        </div>
+      </form>
     </section>
   </nav>
 
-  <footer class="sidebar-footer">
+  <!-- <footer class="sidebar-footer">
     <div class="invite-card">
       <i class="pi pi-user-plus"></i>
       <div class="invite-content">
@@ -76,5 +157,150 @@
         <i class="pi pi-pencil"></i>
       </button>
     </div>
-  </footer>
+  </footer> -->
 </aside>
+
+<!-- Đặt ngoài vùng cuộn sidebar để menu không bị cắt ở cuối danh sách. -->
+<div *ngIf="openedProjectMenu as item" #projectActionsMenu id="sidebar-project-actions" class="project-actions-menu"
+  role="menu" [attr.aria-label]="'Thao tác với ' + item.label" [style.left.px]="projectMenuLeft"
+  [style.top.px]="projectMenuTop" (click)="$event.stopPropagation()" (keydown)="onProjectMenuKeydown($event)">
+  <button type="button" role="menuitem" (click)="openProjectDialog(item, 'details')">
+    <i class="pi pi-info-circle" aria-hidden="true"></i>Xem chi tiết
+  </button>
+  <button *ngIf="item.project?.status !== 'archived'" type="button" role="menuitem"
+    (click)="openProjectDialog(item, 'edit')">
+    <i class="pi pi-pencil" aria-hidden="true"></i>Chỉnh sửa
+  </button>
+  <button *ngIf="item.project?.status !== 'archived'" type="button" role="menuitem"
+    (click)="openProjectDialog(item, 'archive')">
+    <i class="pi pi-inbox" aria-hidden="true"></i>Lưu trữ dự án
+  </button>
+  <button *ngIf="item.project?.status === 'archived'" type="button" role="menuitem"
+    (click)="openProjectDialog(item, 'restore')">
+    <i class="pi pi-refresh" aria-hidden="true"></i>Khôi phục dự án
+  </button>
+</div>
+
+<!-- Native dialog giữ focus trong popup và hiển thị trên vùng overflow của sidebar. -->
+<dialog #projectDialog class="project-dialog" aria-labelledby="project-dialog-title"
+  (cancel)="onProjectDialogCancel($event)" (click)="onProjectDialogBackdropClick($event)">
+  <div class="project-dialog-card" [attr.aria-busy]="loadingProjectDetails || savingProject">
+    <header class="project-dialog-header">
+      <h2 id="project-dialog-title">{{ projectDialogTitle }}</h2>
+      <button type="button" class="project-dialog-close" aria-label="Đóng thông tin dự án" [disabled]="savingProject"
+        (click)="closeProjectDialog()" autofocus>
+        <i class="pi pi-times" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div *ngIf="loadingProjectDetails" class="project-dialog-loading" role="status">
+      <i class="pi pi-spinner pi-spin" aria-hidden="true"></i> Đang tải thông tin dự án...
+    </div>
+
+    <div *ngIf="projectDetailError" class="project-dialog-body">
+      <p class="project-form-error" role="alert">{{ projectDetailError }}</p>
+      <button type="button" class="project-secondary-action" (click)="loadProjectDetails()">Thử lại</button>
+    </div>
+
+    <ng-container *ngIf="projectDetails as project">
+      <div *ngIf="dialogMode === 'details'" class="project-dialog-body">
+        <div class="project-detail-heading">
+          <h3>{{ project.projectName }}</h3>
+          <span class="project-status-badge" [class.archived]="project.status === 'archived'">
+            {{ project.status === 'archived' ? 'Đã lưu trữ' : 'Đang hoạt động' }}
+          </span>
+        </div>
+        <dl class="project-detail-grid">
+          <div>
+            <dt>Mã dự án</dt>
+            <dd>{{ project.projectKey }}</dd>
+          </div>
+          <div>
+            <dt>Thành viên</dt>
+            <dd>{{ project.memberCount }}</dd>
+          </div>
+          <div>
+            <dt>Ticket chưa lưu trữ</dt>
+            <dd>{{ project.ticketCount }}</dd>
+          </div>
+          <div>
+            <dt>Ngày tạo</dt>
+            <dd>{{ project.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Cập nhật gần nhất</dt>
+            <dd>{{ project.updatedAt ? (project.updatedAt | date:'dd/MM/yyyy HH:mm') : 'Chưa cập nhật' }}</dd>
+          </div>
+          <div class="project-detail-wide">
+            <dt>Mô tả</dt>
+            <dd class="project-description">{{ project.description || 'Chưa có mô tả' }}</dd>
+          </div>
+          <!-- <div class="project-detail-wide">
+            <dt>ID dự án</dt>
+            <dd class="project-id-value">{{ project.projectId }}</dd>
+          </div>
+          <div class="project-detail-wide">
+            <dt>ID người tạo</dt>
+            <dd class="project-id-value">{{ project.createdBy || '—' }}</dd>
+          </div> -->
+          <div *ngIf="project.updatedBy" class="project-detail-wide">
+            <dt>ID người cập nhật</dt>
+            <dd class="project-id-value">{{ project.updatedBy }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <form *ngIf="dialogMode === 'edit'" id="sidebar-edit-project-form" class="project-dialog-body project-edit-form"
+        novalidate (submit)="saveProjectChanges($event)">
+        <label for="project-edit-key">Mã dự án</label>
+        <input id="project-edit-key" type="text" [value]="project.projectKey" readonly
+          aria-describedby="project-edit-key-hint" />
+        <!-- <small id="project-edit-key-hint">Mã dự án cố định sau khi tạo.</small> -->
+        <label for="project-edit-name">Tên dự án <span aria-hidden="true">*</span></label>
+        <input #editProjectName id="project-edit-name" name="projectName" type="text" required maxlength="255"
+          [value]="editedProjectName" [disabled]="savingProject" (input)="editedProjectName = editProjectName.value" />
+        <label for="project-edit-description">Mô tả</label>
+        <textarea #editProjectDescription id="project-edit-description" name="description" rows="5"
+          [value]="editedProjectDescription" [disabled]="savingProject"
+          (input)="editedProjectDescription = editProjectDescription.value"></textarea>
+      </form>
+
+      <div *ngIf="dialogMode === 'archive' || dialogMode === 'restore'"
+        class="project-dialog-body project-confirm-body">
+        <p>Bạn muốn {{ dialogMode === 'archive' ? 'lưu trữ' : 'khôi phục' }} dự án <strong>{{ project.projectName
+            }}</strong>?</p>
+        <p class="project-confirm-hint">{{ dialogMode === 'archive'
+          ? 'Dự án sẽ chuyển sang danh sách đã lưu trữ. Dữ liệu được giữ lại; cần khôi phục trước khi chỉnh sửa.'
+          : 'Dự án sẽ trở lại danh sách đang hoạt động.' }}</p>
+      </div>
+
+      <p *ngIf="projectActionError" class="project-form-error project-dialog-error" role="alert">{{ projectActionError
+        }}</p>
+
+      <footer class="project-dialog-footer">
+        <ng-container *ngIf="dialogMode === 'details'">
+          <button *ngIf="project.status === 'active'" type="button" class="project-secondary-action"
+            [disabled]="savingProject" (click)="changeDialogMode('archive')">Lưu trữ</button>
+          <button *ngIf="project.status === 'active'" type="button" class="project-primary-action"
+            [disabled]="savingProject" (click)="changeDialogMode('edit')">Chỉnh sửa</button>
+          <button *ngIf="project.status === 'archived'" type="button" class="project-primary-action"
+            [disabled]="savingProject" (click)="changeDialogMode('restore')">Khôi phục</button>
+        </ng-container>
+        <ng-container *ngIf="dialogMode !== 'details'">
+          <button type="button" class="project-secondary-action" [disabled]="savingProject"
+            (click)="changeDialogMode('details')">Hủy</button>
+          <button *ngIf="dialogMode === 'edit'" type="submit" form="sidebar-edit-project-form"
+            class="project-primary-action" [disabled]="savingProject">
+            <i *ngIf="savingProject" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            {{ savingProject ? 'Đang lưu...' : 'Lưu thay đổi' }}
+          </button>
+          <button *ngIf="dialogMode === 'archive' || dialogMode === 'restore'" type="button"
+            class="project-primary-action" [disabled]="savingProject" (click)="confirmProjectStatusChange()">
+            <i *ngIf="savingProject" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            {{ savingProject ? 'Đang xử lý...' : (dialogMode === 'archive' ? 'Lưu trữ' : 'Khôi phục') }}
+          </button>
+        </ng-container>
+      </footer>
+    </ng-container>
+  </div>
+</dialog>

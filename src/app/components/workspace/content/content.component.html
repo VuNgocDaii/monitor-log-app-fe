@@ -1,6 +1,6 @@
 <main class="content">
   <header class="content-header">
-    <div class="breadcrumb">
+    <!-- <div class="breadcrumb">
       <i [ngClass]="selectedItem.icon"></i>
       <strong>{{ selectedItem.label }}</strong>
       <span class="private-label"><i class="pi pi-lock"></i> Private</span>
@@ -12,11 +12,11 @@
       <button type="button" aria-label="Sao chép liên kết"><i class="pi pi-link"></i></button>
       <button type="button" aria-label="Yêu thích"><i class="pi pi-star"></i></button>
       <button type="button" aria-label="Thêm"><i class="pi pi-ellipsis-h"></i></button>
-    </div>
+    </div> -->
   </header>
 
   <section *ngIf="isGettingStarted; else emptyPage" class="page">
-    <div class="page-inner">
+    <!-- <div class="page-inner">
       <div class="page-emoji">👋</div>
       <h1>Getting Started</h1>
 
@@ -36,11 +36,11 @@
           <p>Use the sidebar to organize pages and open the content you need.</p>
         </details>
       </div>
-    </div>
+    </div> -->
   </section>
 
   <ng-template #emptyPage>
-    <section class="page">
+    <!-- <section class="page">
       <div class="page-inner">
         <i class="empty-icon" [ngClass]="selectedItem.icon"></i>
         <h1>{{ selectedItem.label }}</h1>
@@ -48,10 +48,10 @@
           Nội dung của trang {{ selectedItem.label }} sẽ hiển thị tại đây.
         </p>
       </div>
-    </section>
+    </section> -->
   </ng-template>
 
-  <button type="button" class="help-button" aria-label="Trợ giúp">
+  <!-- <button type="button" class="help-button" aria-label="Trợ giúp">
     <i class="pi pi-question"></i>
-  </button>
+  </button> -->
 </main>
