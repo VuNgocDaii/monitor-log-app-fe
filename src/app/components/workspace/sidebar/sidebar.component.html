@@ -42,8 +42,8 @@
           <span class="sidebar-label">{{ projectStatusFilter === 'active' ? 'Đã lưu trữ' : 'Đang hoạt động' }}</span>
         </button>
       </div>
-      <p *ngIf="section.id === 'projects' && projectStatusFilter === 'archived' && !collapsed"
-        class="project-list-caption">Dự án đã lưu trữ</p>
+      <!-- <p *ngIf="section.id === 'projects' && projectStatusFilter === 'archived' && !collapsed"
+        class="project-list-caption">Dự án đã lưu trữ</p> -->
 
       <div *ngFor="let item of section.items; trackBy: trackMenuItem" class="project-row"
         [class.active]="activeItemId === item.id">
@@ -94,7 +94,7 @@
         </button>
       </ng-container>
 
-      <button *ngIf="section.allowAdd" #addProjectButton type="button" class="menu-item add-item"
+      <button *ngIf="section.allowAdd && projectStatusFilter !== 'archived'" #addProjectButton type="button" class="menu-item add-item"
         aria-label="Tạo project mới" [attr.title]="collapsed ? 'Tạo project mới' : null"
         [attr.aria-expanded]="showCreateProject && !collapsed" aria-controls="sidebar-create-project"
         (click)="openCreateProject()">
@@ -166,6 +166,9 @@
   [style.top.px]="projectMenuTop" (click)="$event.stopPropagation()" (keydown)="onProjectMenuKeydown($event)">
   <button type="button" role="menuitem" (click)="openProjectDialog(item, 'details')">
     <i class="pi pi-info-circle" aria-hidden="true"></i>Xem chi tiết
+  </button>
+  <button type="button" role="menuitem" (click)="openProjectManagement(item)">
+    <i class="pi pi-users" aria-hidden="true"></i>Quản lý thành viên
   </button>
   <button *ngIf="item.project?.status !== 'archived'" type="button" role="menuitem"
     (click)="openProjectDialog(item, 'edit')">

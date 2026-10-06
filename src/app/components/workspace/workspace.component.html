@@ -4,6 +4,7 @@
     [activeItemId]="selectedItem.id"
     (itemSelected)="onMenuItemSelected($event)"
     (collapsedChange)="onSidebarCollapsed($event)"
+    (manageProject)="openProjectManagement($event)"
   ></app-sidebar>
 
   <app-content
@@ -11,4 +12,11 @@
     [selectedItem]="selectedItem"
     [sidebarCollapsed]="sidebarCollapsed"
   ></app-content>
+
+  <app-project-member-management
+    *ngIf="managedProject"
+    [project]="managedProject"
+    (closed)="closeProjectManagement()"
+    (memberCountChanged)="onProjectMemberCountChanged($event)"
+  ></app-project-member-management>
 </div>

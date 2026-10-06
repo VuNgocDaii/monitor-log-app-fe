@@ -16,7 +16,6 @@ import {
   ProjectResponse,
   ProjectService,
 } from 'src/app/services/project.service';
-
 export interface WorkspaceMenuItem {
   id: string;
   label: string;
@@ -44,6 +43,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   @Output() itemSelected = new EventEmitter<WorkspaceMenuItem>();
   @Output() collapsedChange = new EventEmitter<boolean>();
+  @Output() manageProject = new EventEmitter<ProjectResponse>();
 
   @ViewChild('addProjectButton')
   private addProjectButton?: ElementRef<HTMLButtonElement>;
@@ -315,6 +315,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
       : event.key === 'End' ? buttons.length - 1
         : (current + (event.key === 'ArrowUp' ? -1 : 1) + buttons.length) % buttons.length;
     buttons[next].focus();
+  }
+
+  openProjectManagement(item: WorkspaceMenuItem): void {
+    if (!item.project) {
+      return;
+    }
+    this.closeProjectMenu();
+    this.manageProject.emit(item.project);
   }
 
   get projectDialogTitle(): string {

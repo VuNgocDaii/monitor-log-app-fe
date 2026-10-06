@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WorkspaceMenuItem } from './sidebar/sidebar.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { ProjectResponse } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-workspace',
@@ -16,6 +17,7 @@ export class WorkspaceComponent implements OnInit {
 
   sidebarCollapsed = false;
   currentUser: any = null;
+  managedProject: ProjectResponse | null = null;
 
   constructor(private readonly authService: AuthService) {}
 
@@ -29,6 +31,32 @@ export class WorkspaceComponent implements OnInit {
 
   onSidebarCollapsed(collapsed: boolean): void {
     this.sidebarCollapsed = collapsed;
+  }
+
+  openProjectManagement(project: ProjectResponse): void {
+    this.managedProject = project;
+  }
+
+  closeProjectManagement(): void {
+    this.managedProject = null;
+  }
+
+  onProjectMemberCountChanged(memberCount: number): void {
+    if (!this.managedProject) {
+      return;
+    }
+
+    this.managedProject.memberCount = memberCount;
+
+    if (this.selectedItem.projectId === this.managedProject.projectId && this.selectedItem.project) {
+      this.selectedItem = {
+        ...this.selectedItem,
+        project: {
+          ...this.selectedItem.project,
+          memberCount,
+        },
+      };
+    }
   }
 
   getCurrentUser(): void {

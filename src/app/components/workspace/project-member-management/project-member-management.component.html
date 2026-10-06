@@ -1,0 +1,243 @@
+<div class="member-management-overlay" (click)="onBackdropClick($event)">
+  <section
+    class="member-management-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="member-management-title"
+    [attr.aria-busy]="loadingMembers || isWriting"
+    (click)="$event.stopPropagation()"
+  >
+    <header class="dialog-header">
+      <div class="project-heading">
+        <span class="project-icon" aria-hidden="true">
+          <i class="pi pi-folder"></i>
+        </span>
+        <div>
+          <p class="eyebrow">Quản lý dự án · {{ project.projectKey }}</p>
+          <h2 id="member-management-title">{{ project.projectName }}</h2>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span class="status-badge" [class.status-badge--archived]="isArchived">
+          {{ isArchived ? 'Đã lưu trữ' : 'Đang hoạt động' }}
+        </span>
+        <button type="button" class="icon-button" aria-label="Đóng" [disabled]="isWriting" (click)="close()">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <div *ngIf="successMessage" class="success-toast" role="status" aria-live="polite">
+      <i class="pi pi-check-circle" aria-hidden="true"></i>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <p *ngIf="actionError" class="alert alert--error" role="alert">
+      <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+      {{ actionError }}
+    </p>
+
+    <p *ngIf="isArchived" class="alert alert--info" role="status">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+      Dự án đã lưu trữ nên danh sách thành viên chỉ có thể xem.
+    </p>
+
+    <div class="dialog-content" [class.dialog-content--with-candidates]="showAddMember">
+      <section class="member-panel" aria-labelledby="current-members-title">
+        <div class="panel-header">
+          <div>
+            <h3 id="current-members-title">Thành viên</h3>
+            <p>{{ memberTotalCount }} người trong dự án</p>
+          </div>
+          <button
+            *ngIf="!showAddMember"
+            type="button"
+            class="primary-button"
+            [disabled]="isArchived || isWriting"
+            (click)="openAddMember()"
+          >
+            <i class="pi pi-user-plus" aria-hidden="true"></i>
+            Thêm thành viên
+          </button>
+        </div>
+
+        <label class="search-box" for="member-search">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input
+            #memberSearchInput
+            id="member-search"
+            type="search"
+            autocomplete="off"
+            placeholder="Tìm theo tên, tài khoản hoặc email"
+            [value]="memberSearch"
+            (input)="onMemberSearchChanged(memberSearchInput.value)"
+          />
+        </label>
+
+        <div *ngIf="loadingMembers" class="state-message" role="status">
+          <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+          Đang tải thành viên...
+        </div>
+
+        <div *ngIf="!loadingMembers && memberError" class="state-message state-message--error" role="alert">
+          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+          <span>{{ memberError }}</span>
+          <button type="button" (click)="loadMembers()">Thử lại</button>
+        </div>
+
+        <div *ngIf="!loadingMembers && !memberError && !members.length" class="empty-state" role="status">
+          <i class="pi pi-users" aria-hidden="true"></i>
+          <strong>{{ memberSearch ? 'Không tìm thấy thành viên' : 'Dự án chưa có thành viên' }}</strong>
+          <span>{{ memberSearch ? 'Thử một từ khóa khác.' : 'Thêm tài khoản đầu tiên vào dự án.' }}</span>
+        </div>
+
+        <ul *ngIf="!loadingMembers && !memberError && members.length" class="user-list">
+          <li *ngFor="let member of members; trackBy: trackUser" class="user-row">
+            <span class="avatar" aria-hidden="true">{{ initials(member) }}</span>
+            <div class="user-info">
+              <div class="user-name-line">
+                <strong>{{ displayName(member) }}</strong>
+                <span *ngIf="!member.isActive" class="inactive-badge">Ngừng hoạt động</span>
+              </div>
+              <span>@{{ member.username }}<ng-container *ngIf="member.email"> · {{ member.email }}</ng-container></span>
+              <div *ngIf="member.roles?.length" class="role-list" aria-label="Vai trò">
+                <span *ngFor="let role of member.roles" class="role-badge">{{ role.roleName }}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="remove-button"
+              [attr.aria-label]="'Xóa ' + displayName(member) + ' khỏi dự án'"
+              [attr.title]="isArchived ? 'Không thể sửa dự án đã lưu trữ' : 'Xóa khỏi dự án'"
+              [disabled]="isArchived || isWriting"
+              (click)="requestRemove(member)"
+            >
+              <i class="pi pi-trash" aria-hidden="true"></i>
+            </button>
+          </li>
+        </ul>
+
+        <nav *ngIf="memberTotalPages > 1" class="pagination" aria-label="Phân trang thành viên">
+          <button type="button" aria-label="Trang trước" [disabled]="memberPage <= 1 || loadingMembers" (click)="loadMembers(memberPage - 1)">
+            <i class="pi pi-angle-left" aria-hidden="true"></i>
+          </button>
+          <span>Trang {{ memberPage }} / {{ memberTotalPages }}</span>
+          <button type="button" aria-label="Trang sau" [disabled]="memberPage >= memberTotalPages || loadingMembers" (click)="loadMembers(memberPage + 1)">
+            <i class="pi pi-angle-right" aria-hidden="true"></i>
+          </button>
+        </nav>
+      </section>
+
+      <aside *ngIf="showAddMember" class="candidate-panel" aria-labelledby="candidate-title">
+        <header class="panel-header candidate-heading">
+          <div>
+            <h3 id="candidate-title">Thêm thành viên</h3>
+            <!-- <p>{{ candidateTotalCount }} tài khoản có thể thêm</p> -->
+          </div>
+          <button type="button" class="icon-button" aria-label="Đóng danh sách thêm thành viên"
+            [disabled]="!!addingUserId" (click)="closeAddMember()">
+            <i class="pi pi-times" aria-hidden="true"></i>
+          </button>
+        </header>
+
+        <div class="candidate-dialog-body">
+          <label class="search-box" for="candidate-search">
+            <i class="pi pi-search" aria-hidden="true"></i>
+            <input
+              #candidateSearchInput
+              id="candidate-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Tìm theo tên, tài khoản hoặc email"
+              [value]="candidateSearch"
+              (input)="onCandidateSearchChanged(candidateSearchInput.value)"
+            />
+          </label>
+          <!-- <p *ngIf="!candidateSearch" class="search-hint">Đang hiển thị toàn bộ tài khoản hợp lệ.</p> -->
+
+          <div *ngIf="loadingCandidates" class="state-message" role="status">
+            <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            Đang tải tài khoản...
+          </div>
+
+          <div *ngIf="!loadingCandidates && candidateError" class="state-message state-message--error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+            <span>{{ candidateError }}</span>
+            <button type="button" (click)="loadCandidates()">Thử lại</button>
+          </div>
+
+          <div *ngIf="!loadingCandidates && !candidateError && !candidates.length"
+            class="empty-state empty-state--small" role="status">
+            <i class="pi pi-user-plus" aria-hidden="true"></i>
+            <strong>{{ candidateSearch ? 'Không tìm thấy tài khoản' : 'Không còn tài khoản để thêm' }}</strong>
+          </div>
+
+          <ul *ngIf="!loadingCandidates && !candidateError && candidates.length" class="user-list candidate-list">
+            <li *ngFor="let candidate of candidates; trackBy: trackUser" class="user-row">
+              <span class="avatar avatar--candidate" aria-hidden="true">{{ initials(candidate) }}</span>
+              <div class="user-info">
+                <strong>{{ displayName(candidate) }}</strong>
+                <span>@{{ candidate.username }}<ng-container *ngIf="candidate.email"> · {{ candidate.email }}</ng-container></span>
+              </div>
+              <button type="button" class="add-button" [disabled]="isWriting"
+                [attr.aria-label]="'Thêm ' + displayName(candidate) + ' vào dự án'" (click)="requestAdd(candidate)">
+                <i [class]="addingUserId === candidate.userId ? 'pi pi-spinner pi-spin' : 'pi pi-plus'" aria-hidden="true"></i>
+                <span>Thêm</span>
+              </button>
+            </li>
+          </ul>
+
+          <nav *ngIf="candidateTotalPages > 1" class="pagination" aria-label="Phân trang tài khoản">
+            <button type="button" aria-label="Trang trước"
+              [disabled]="candidatePage <= 1 || loadingCandidates || isWriting"
+              (click)="loadCandidates(candidatePage - 1)">
+              <i class="pi pi-angle-left" aria-hidden="true"></i>
+            </button>
+            <span>Trang {{ candidatePage }} / {{ candidateTotalPages }}</span>
+            <button type="button" aria-label="Trang sau"
+              [disabled]="candidatePage >= candidateTotalPages || loadingCandidates || isWriting"
+              (click)="loadCandidates(candidatePage + 1)">
+              <i class="pi pi-angle-right" aria-hidden="true"></i>
+            </button>
+          </nav>
+        </div>
+      </aside>
+    </div>
+
+    <div *ngIf="candidatePendingAdd as candidate" class="confirm-overlay confirm-overlay--top" role="presentation">
+      <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="add-member-title">
+        <span class="confirm-icon confirm-icon--add" aria-hidden="true"><i class="pi pi-user-plus"></i></span>
+        <h3 id="add-member-title">Thêm thành viên vào dự án?</h3>
+        <p>
+          Thêm <strong>{{ displayName(candidate) }}</strong> vào dự án
+          <strong>{{ project.projectName }}</strong>.
+        </p>
+        <p *ngIf="actionError" class="confirm-error" role="alert">{{ actionError }}</p>
+        <div class="confirm-actions">
+          <button type="button" class="secondary-button" [disabled]="!!addingUserId" (click)="cancelAdd()">Hủy</button>
+          <button type="button" class="primary-button" [disabled]="!!addingUserId" (click)="confirmAdd()">
+            <i *ngIf="addingUserId" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            {{ addingUserId ? 'Đang thêm...' : 'Thêm thành viên' }}
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div *ngIf="memberPendingDelete as member" class="confirm-overlay" role="presentation">
+      <section class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="remove-member-title">
+        <span class="confirm-icon" aria-hidden="true"><i class="pi pi-exclamation-triangle"></i></span>
+        <h3 id="remove-member-title">Xóa thành viên khỏi dự án?</h3>
+        <p><strong>{{ displayName(member) }}</strong> sẽ mất quyền truy cập vào dự án {{ project.projectName }}.</p>
+        <p *ngIf="actionError" class="confirm-error" role="alert">{{ actionError }}</p>
+        <div class="confirm-actions">
+          <button type="button" class="secondary-button" [disabled]="!!removingUserId || verifyingRemoval" (click)="cancelRemove()">Hủy</button>
+          <button type="button" class="danger-button" [disabled]="!!removingUserId || verifyingRemoval" (click)="confirmRemove()">
+            <i *ngIf="removingUserId || verifyingRemoval" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
+            {{ verifyingRemoval ? 'Đang kiểm tra...' : (removingUserId ? 'Đang xóa...' : 'Xóa thành viên') }}
+          </button>
+        </div>
+      </section>
+    </div>
+  </section>
+</div>
