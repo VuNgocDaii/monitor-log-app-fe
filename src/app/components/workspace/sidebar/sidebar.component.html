@@ -170,6 +170,9 @@
   <button type="button" role="menuitem" (click)="openProjectManagement(item)">
     <i class="pi pi-users" aria-hidden="true"></i>Quản lý thành viên
   </button>
+  <button type="button" role="menuitem" (click)="openProjectConfiguration(item)">
+    <i class="pi pi-cog" aria-hidden="true"></i>Cấu hình dự án
+  </button>
   <button *ngIf="item.project?.status !== 'archived'" type="button" role="menuitem"
     (click)="openProjectDialog(item, 'edit')">
     <i class="pi pi-pencil" aria-hidden="true"></i>Chỉnh sửa

@@ -17,6 +17,7 @@ import { Constants, Roles } from './shared/constants/constants';
                 },
                 {
                     path: 'session',
+                    canActivate: [AuthGuard],
                     loadChildren: () =>
                         import('./components/session-view/session-view.module')
                             .then((m) => m.SessionViewModule),
@@ -30,6 +31,7 @@ import { Constants, Roles } from './shared/constants/constants';
                 },
                 {
                     path: 'workspace',
+                    canActivate: [AuthGuard],
                     loadChildren: () =>
                         import('./components/workspace/workspace.module')
                             .then((m) => m.WorkspaceModule),

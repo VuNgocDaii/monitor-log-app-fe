@@ -44,6 +44,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   @Output() itemSelected = new EventEmitter<WorkspaceMenuItem>();
   @Output() collapsedChange = new EventEmitter<boolean>();
   @Output() manageProject = new EventEmitter<ProjectResponse>();
+  @Output() manageProjectConfiguration = new EventEmitter<ProjectResponse>();
 
   @ViewChild('addProjectButton')
   private addProjectButton?: ElementRef<HTMLButtonElement>;
@@ -267,7 +268,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.menuTrigger = event.currentTarget as HTMLButtonElement;
     const rect = this.menuTrigger.getBoundingClientRect();
     const menuWidth = Math.min(216, window.innerWidth - 16);
-    const menuHeight = 144;
+    const menuHeight = 180;
     this.projectMenuLeft = Math.max(8, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 8));
     this.projectMenuTop = rect.bottom + menuHeight + 8 <= window.innerHeight
       ? rect.bottom + 4
@@ -323,6 +324,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
     this.closeProjectMenu();
     this.manageProject.emit(item.project);
+  }
+
+  openProjectConfiguration(item: WorkspaceMenuItem): void {
+    if (!item.project) {
+      return;
+    }
+    this.closeProjectMenu();
+    this.manageProjectConfiguration.emit(item.project);
   }
 
   get projectDialogTitle(): string {

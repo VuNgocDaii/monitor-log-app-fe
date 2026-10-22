@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login.component';
+import { ChangeRequiredPasswordComponent } from './change-required-password.component';
 import { LoginRoutingModule } from './login-routing.module';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +15,8 @@ import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    ChangeRequiredPasswordComponent
   ],
   imports: [
     CommonModule,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseService } from './base-service';
+import { AuthTokenResponse } from '../models/auth-model';
 
 @Injectable({
     providedIn: 'root'
@@ -8,17 +9,17 @@ import { BaseService } from './base-service';
 export class AuthService extends BaseService {
     override url = '/auth';
 
-    login(payload: any): Observable<any> {
+    login(payload: { username: string; password: string }): Observable<AuthTokenResponse> {
         return this.post(`${this.url}/login`, payload);
     }
 
-    refresh(refreshToken: string): Observable<any> {
+    refresh(refreshToken: string): Observable<AuthTokenResponse> {
         return this.post(`${this.url}/refresh`, {
             refreshToken
         });
     }
 
-    logout(refreshToken: string): Observable<any> {
+    logout(refreshToken?: string): Observable<void> {
         return this.post(`${this.url}/logout`, {
             refreshToken
         });
@@ -28,7 +29,11 @@ export class AuthService extends BaseService {
         return this.post(`${this.url}/change-password`, payload);
     }
 
-    changeRequiredPassword(payload: any): Observable<any> {
+    changeRequiredPassword(payload: {
+        username: string;
+        currentPassword: string;
+        newPassword: string;
+    }): Observable<AuthTokenResponse> {
         return this.post(
             `${this.url}/change-required-password`,
             payload

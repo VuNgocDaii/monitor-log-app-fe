@@ -2,11 +2,11 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from 'src/app/shared/app-config.service';
-import { StorageKeys } from 'src/app/shared/constants/constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { AuthStateService } from 'src/app/shared/app-state/auth-state.service';
 import { NotificationService } from 'src/app/shared/notification.service';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
+import { AuthTokenResponse } from 'src/app/models/auth-model';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: ['', [Validators.required]],
     });
     this.route.queryParamMap.subscribe((params) => {
-      this.returnUrl = params.get('returnUrl') || '/admin';
+      this.returnUrl = params.get('returnUrl') || '/workspace';
     });
   }
 
@@ -42,43 +42,39 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {}
 
   login(): void {
-    this.sub = this.authService.login(this.loginForm.value).subscribe(
-      (res) => {
-      //   if (!res.status) {
-      //     localStorage.setItem(StorageKeys.TOKEN, res.jsonData.token);
-      //     localStorage.setItem(StorageKeys.USER, JSON.stringify(res.jsonData));
-      //     this.authState.dispatch(res.jsonData);
-      //     console.log(this.returnUrl);
-          
-      //   // if (this.returnUrl == 'home') {
-      //   //     this.router.navigate(['/']);
-      //   //   } else {
-      //   //     this.router.navigate(['/admin']);
-      //   //   }
-      //   } else {
-      //     this.notification.error('Lỗi đăng nhập', res.status);
-      //   }
-      // },
-      // (error) => {
-      //   if (error.error && error.error.message) {
-      //     this.messageError = error.error.message;
-      //     this.notification.error('Lỗi đăng nhập', 'Tên đăng nhập hoặc mật khẩu không đúng!');
-      //   } else {
-      //     this.messageError = StorageKeys.LOGIN_FAIL;
-      //     this.notification.error('Lỗi đăng nhập', StorageKeys.LOGIN_FAIL);
-      //   }
-        if (res.status) {
-          this.notification.error('Lỗi đăng nhập', res.status);
+    if (this.loginForm.invalid || this.loading) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    this.loading = true;
+    const credentials = {
+      username: this.loginForm.controls['username'].value.trim(),
+      password: this.loginForm.controls['password'].value,
+    };
+    this.sub = this.authService.login(credentials).pipe(
+      finalize(() => { this.loading = false; })
+    ).subscribe({
+      next: (response: AuthTokenResponse) => {
+        if (response.mustChangePassword) {
+          void this.router.navigate(['/login/change-required-password'], {
+            queryParams: { username: response.username, returnUrl: this.returnUrl },
+          });
+          return;
         }
-        else {
-          console.log("run here");
-          localStorage.setItem(StorageKeys.TOKEN, res.accessToken);
-          // localStorage.setItem(StorageKeys.USER, JSON.stringify(res.jsonData));
-          // this.authState.dispatch(res.jsonData);
-          this.router.navigate(['/workspace']);
+
+        try {
+          this.authState.loginSuccess(response);
+          void this.router.navigateByUrl(this.returnUrl);
+        } catch {
+          this.notification.error('Lỗi đăng nhập', 'Máy chủ không trả về token hợp lệ.');
         }
       },
-    );
+      error: error => {
+        const detail = error?.error?.detail ?? error?.error?.title ?? error?.error?.message;
+        this.notification.error('Lỗi đăng nhập', detail || 'Tên đăng nhập hoặc mật khẩu không đúng.');
+      },
+    });
   }
 
   removeTextErrorLogin() {

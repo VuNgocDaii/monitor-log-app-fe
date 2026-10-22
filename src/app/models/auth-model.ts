@@ -1,22 +1,42 @@
 export interface IAuthModel {
-    id?: number;
+    id?: string;
     username?: string;
     avatar?: string;
     menus?: any[];
-    role?: '';
+    role?: string;
+    roles?: string[];
+    permissions?: string[];
+    fullName?: string | null;
     fullname?: string;
     email?: string;
     isProvider?: boolean;
     providerId?: number;
-    token?:string;
-    isLock?:boolean;
+    token?: string;
+    isLock?: boolean;
+}
+
+export interface AuthTokenResponse {
+    tokenType: string;
+    accessToken: string | null;
+    expiresIn: number;
+    refreshToken: string | null;
+    userId: string;
+    username: string;
+    fullName: string | null;
+    roles: string[];
+    permissions: string[];
+    mustChangePassword: boolean;
+    passwordExpiresAt: string | null;
 }
 export const INIT_AUTH_MODEL: IAuthModel = {
-    id: 1,
+    id: '',
     username: '',
     avatar: '',
     menus: [],
     role: '',
+    roles: [],
+    permissions: [],
+    fullName: '',
     fullname: '',
     email: '',
     isProvider: false,

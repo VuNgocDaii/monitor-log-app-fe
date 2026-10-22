@@ -1,0 +1,152 @@
+<div class="configuration-overlay" (click)="close()">
+  <section class="configuration-dialog" role="dialog" aria-modal="true" aria-labelledby="configuration-title"
+    (click)="$event.stopPropagation()">
+    <header class="configuration-header">
+      <div>
+        <p>Thiết lập dự án · {{ project.projectKey }}</p>
+        <h2 id="configuration-title">{{ project.projectName }}</h2>
+      </div>
+      <button type="button" class="icon-button" aria-label="Đóng" [disabled]="saving" (click)="close()"><i
+          class="pi pi-times"></i></button>
+    </header>
+
+    <p *ngIf="isArchived" class="notice">Dự án đã lưu trữ. Bạn vẫn có thể xem dữ liệu nhưng không thể thay đổi.</p>
+    <p *ngIf="error" class="error" role="alert">{{ error }}</p>
+
+    <div class="tabs" role="tablist" aria-label="Cấu hình dự án">
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'modules'" [class.active]="tab === 'modules'"
+        (click)="setTab('modules')">Module</button>
+      <button type="button" role="tab" [attr.aria-selected]="tab === 'statuses'" [class.active]="tab === 'statuses'"
+        (click)="setTab('statuses')">Trạng thái ticket</button>
+    </div>
+
+    <div class="toolbar">
+      <label class="search-box" for="configuration-search"><i class="pi pi-search" aria-hidden="true"></i><input
+          #searchInput id="configuration-search" type="search" autocomplete="off" [value]="search"
+          [attr.placeholder]="tab === 'modules' ? 'Tìm mã hoặc tên module' : 'Tìm mã hoặc tên trạng thái'"
+          (input)="onSearchChanged(searchInput.value)"></label>
+      <div *ngIf="tab === 'statuses'" class="filter-group" role="group" aria-label="Nhóm trạng thái">
+        <button type="button" [class.active]="statusType === 'dev'" (click)="setStatusType('dev')">Dev</button>
+        <button type="button" [class.active]="statusType === 'test'" (click)="setStatusType('test')">Test</button>
+      </div>
+      <button type="button" class="primary-button" [disabled]="isArchived || saving"
+        (click)="tab === 'modules' ? openModuleEditor() : openStatusEditor()">
+        <i class="pi pi-plus"></i> {{ tab === 'modules' ? 'Thêm module' : 'Thêm trạng thái' }}
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading"><i class="pi pi-spinner pi-spin"></i> Đang tải...</div>
+
+    <div *ngIf="tab === 'modules' && !loading" class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mã</th>
+            <th>Tên module</th>
+            <th>Mô tả</th>
+            <th>Ticket</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let module of modules" [class.archived-row]="!module.isActive">
+            <td><code>{{ module.moduleCode }}</code></td>
+            <td>{{ module.moduleName }} <span *ngIf="!module.isActive" class="tag tag--archived">Đã xóa</span></td>
+            <td>{{ module.description || '—' }}</td>
+            <td>{{ module.ticketCount }}</td>
+            <td class="row-actions"><button type="button" [disabled]="isArchived || saving || !module.isActive"
+                (click)="openModuleEditor(module)">Sửa</button><button type="button" [disabled]="isArchived || saving"
+                (click)="changeModuleStatus(module)"><i [class]="module.isActive ? 'pi pi-trash' : 'pi pi-refresh'"></i>
+                {{ module.isActive ? 'Xóa' : 'Khôi phục' }}</button></td>
+          </tr>
+          <tr *ngIf="!modules.length">
+            <td colspan="5" class="empty">Không có module phù hợp.</td>
+          </tr>
+        </tbody>
+      </table>
+      <nav *ngIf="moduleTotalPages > 1" class="pagination"><button type="button" [disabled]="modulePage <= 1"
+          (click)="loadModules(modulePage - 1)">Trước</button><span>Trang {{ modulePage }} / {{ moduleTotalPages }} · {{
+          moduleTotalCount }} module</span><button type="button" [disabled]="modulePage >= moduleTotalPages"
+          (click)="loadModules(modulePage + 1)">Sau</button></nav>
+    </div>
+
+    <div *ngIf="tab === 'statuses' && !loading" class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Màu</th>
+            <th>Mã</th>
+            <th>Tên</th>
+            <th>Thứ tự</th>
+            <th>Thiết lập</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let status of statuses" [class.archived-row]="!status.isActive">
+            <td><span class="color" [style.background]="status.color || '#94a3b8'"></span></td>
+            <td><code>{{ status.statusCode }}</code></td>
+            <td>{{ status.statusName }} <span *ngIf="!status.isActive" class="tag tag--archived">Đã xóa</span></td>
+            <td>{{ status.displayOrder }}</td>
+            <td><span *ngIf="status.isDefault" class="tag">Mặc định</span><span *ngIf="status.isClosed"
+                class="tag tag--closed">Đóng</span></td>
+            <td class="row-actions"><button type="button" [disabled]="isArchived || saving || !status.isActive"
+                (click)="openStatusEditor(status)">Sửa</button><button type="button"
+                [disabled]="isArchived || saving || (status.isActive && status.isDefault)"
+                [attr.title]="status.isDefault ? 'Cần chọn trạng thái mặc định khác trước khi xóa' : null"
+                (click)="changeTicketStatus(status)"><i [class]="status.isActive ? 'pi pi-trash' : 'pi pi-refresh'"></i>
+                {{ status.isActive ? 'Xóa' : 'Khôi phục' }}</button></td>
+          </tr>
+          <tr *ngIf="!statuses.length">
+            <td colspan="6" class="empty">Không có trạng thái phù hợp.</td>
+          </tr>
+        </tbody>
+      </table>
+      <nav *ngIf="statusTotalPages > 1" class="pagination"><button type="button" [disabled]="statusPage <= 1"
+          (click)="loadStatuses(statusPage - 1)">Trước</button><span>Trang {{ statusPage }} / {{ statusTotalPages }} ·
+          {{ statusTotalCount }} trạng thái</span><button type="button" [disabled]="statusPage >= statusTotalPages"
+          (click)="loadStatuses(statusPage + 1)">Sau</button></nav>
+    </div>
+
+    <div *ngIf="editorOpen" class="editor-overlay" role="presentation" (click)="cancelEditor()">
+      <section class="editor-popup" role="dialog" aria-modal="true"
+        [attr.aria-labelledby]="tab === 'modules' ? 'module-editor-title' : 'status-editor-title'"
+        (click)="$event.stopPropagation()">
+        <header class="editor-popup-header">
+          <h3 *ngIf="tab === 'modules'" id="module-editor-title">{{ editingModule ? 'Sửa module' : 'Tạo module' }}</h3>
+          <h3 *ngIf="tab === 'statuses'" id="status-editor-title">{{ editingStatus ? 'Sửa trạng thái ticket' : 'Tạo
+            trạng thái ' + (statusType === 'dev' ? 'phát triển' : 'kiểm thử') }}</h3>
+          <button type="button" class="icon-button" aria-label="Đóng" [disabled]="saving" (click)="cancelEditor()"><i
+              class="pi pi-times"></i></button>
+        </header>
+
+        <div *ngIf="tab === 'modules'" class="form-grid">
+          <label>Mã module <span aria-hidden="true">*</span><input [(ngModel)]="moduleCode" [readonly]="!!editingModule"
+              maxlength="30" placeholder="AUTH"><small>Mã cố định sau khi tạo.</small></label>
+          <label>Tên module <span aria-hidden="true">*</span><input [(ngModel)]="moduleName" maxlength="255"
+              placeholder="Đăng nhập"></label>
+          <label class="wide">Mô tả<textarea [(ngModel)]="moduleDescription" rows="3"></textarea></label>
+        </div>
+        <div *ngIf="tab === 'statuses'" class="form-grid">
+          <p class="form-note wide">Nhóm: <strong>{{ statusType === 'dev' ? 'Phát triển' : 'Kiểm thử' }}</strong></p>
+          <label>Mã trạng thái <span aria-hidden="true">*</span><input [(ngModel)]="statusCode"
+              [readonly]="!!editingStatus" maxlength="30" placeholder="todo"><small>Mã cố định sau khi
+              tạo.</small></label>
+          <label>Tên trạng thái <span aria-hidden="true">*</span><input [(ngModel)]="statusName" maxlength="100"
+              placeholder="Cần xử lý"></label>
+          <label>Màu HEX<input [(ngModel)]="statusColor" maxlength="7" placeholder="#3B82F6"></label>
+          <label>Thứ tự<input [(ngModel)]="statusOrder" type="number" min="0"></label>
+          <label class="checkbox"><input [(ngModel)]="statusDefault" type="checkbox"
+              [disabled]="!!editingStatus?.isDefault"> Mặc định <small *ngIf="editingStatus?.isDefault">Chọn trạng thái
+              khác làm mặc định trước.</small></label>
+          <label class="checkbox"><input [(ngModel)]="statusClosed" type="checkbox"> Đóng ticket</label>
+        </div>
+        <footer class="actions"><button type="button" (click)="cancelEditor()" [disabled]="saving">Hủy</button><button
+            *ngIf="tab === 'modules'" type="button" class="primary-button" (click)="saveModule()" [disabled]="saving">{{
+            saving ? 'Đang lưu...' : 'Lưu module' }}</button><button *ngIf="tab === 'statuses'" type="button"
+            class="primary-button" (click)="saveStatus()" [disabled]="saving">{{ saving ? 'Đang lưu...' : 'Lưu trạng
+            thái' }}</button></footer>
+      </section>
+    </div>
+  </section>
+</div>

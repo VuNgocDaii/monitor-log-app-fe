@@ -85,6 +85,7 @@ export class Roles {
 
 export class StorageKeys {
     public static readonly TOKEN = 'token';
+    public static readonly REFRESH_TOKEN = 'refreshToken';
     public static readonly USER = 'user';
     public static readonly ADMIN_DASHBOARD = 'admin';
     public static readonly LOGIN_FAIL = 'Incorrect username and/or password.';

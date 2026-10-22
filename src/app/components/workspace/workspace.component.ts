@@ -18,6 +18,7 @@ export class WorkspaceComponent implements OnInit {
   sidebarCollapsed = false;
   currentUser: any = null;
   managedProject: ProjectResponse | null = null;
+  configuredProject: ProjectResponse | null = null;
 
   constructor(private readonly authService: AuthService) {}
 
@@ -39,6 +40,14 @@ export class WorkspaceComponent implements OnInit {
 
   closeProjectManagement(): void {
     this.managedProject = null;
+  }
+
+  openProjectConfiguration(project: ProjectResponse): void {
+    this.configuredProject = project;
+  }
+
+  closeProjectConfiguration(): void {
+    this.configuredProject = null;
   }
 
   onProjectMemberCountChanged(memberCount: number): void {

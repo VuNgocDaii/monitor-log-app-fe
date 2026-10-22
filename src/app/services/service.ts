@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppConfigService } from '../shared/app-config.service';
-import { Constants, StorageKeys } from '../shared/constants/constants';
+import { Constants } from '../shared/constants/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -170,11 +170,6 @@ export abstract class Service {
         requestHeader = requestHeader.set(key, value as string);
       }
     }
-    requestHeader = requestHeader.set('Authorization', 'Bearer ' + this.getToken());
     return requestHeader;
-    // return new HttpHeaders().set('Authorization', 'Bearer ' + this.getToken());
-  }
-  private getToken(): string {
-    return localStorage.getItem(StorageKeys.TOKEN) ?? '';
   }
 }

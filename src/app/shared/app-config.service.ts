@@ -1,4 +1,3 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AppConfig } from '../models/app-config';
@@ -22,7 +21,7 @@ export class AppConfigService {
         private notification: NotificationService,
     ) {}
 
-    load() {
+    load(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.http
                 .get(
@@ -31,20 +30,26 @@ export class AppConfigService {
                 )
                 .subscribe({
                     next: (data: any) => {
-                        // console.log(data);
-                        this.setConfig(data);
-                        resolve(true);
+                        try {
+                            this.setConfig(data);
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
                     },
                     error: (error) => {
-                        console.log('error', error);
-                        throw new Error(error.message || 'Server Error');
+                        reject(new Error(error.message || 'Không tải được cấu hình ứng dụng.'));
                     },
                 });
         });
     }
 
     private setConfig = (data: any): void => {
-        this.config.api.baseUrl = 'http://' + data.api.baseUrl;
+        const baseUrl = data?.api?.baseUrl;
+        if (typeof baseUrl !== 'string' || !/^https?:\/\//i.test(baseUrl)) {
+            throw new Error('api.baseUrl phải là URL đầy đủ, ví dụ https://api.example.com/api.');
+        }
+        this.config.api.baseUrl = baseUrl.replace(/\/+$/, '');
     };
 
     getConfig = () => this.config;

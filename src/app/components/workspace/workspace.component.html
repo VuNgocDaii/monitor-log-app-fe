@@ -5,6 +5,7 @@
     (itemSelected)="onMenuItemSelected($event)"
     (collapsedChange)="onSidebarCollapsed($event)"
     (manageProject)="openProjectManagement($event)"
+    (manageProjectConfiguration)="openProjectConfiguration($event)"
   ></app-sidebar>
 
   <app-content
@@ -19,4 +20,10 @@
     (closed)="closeProjectManagement()"
     (memberCountChanged)="onProjectMemberCountChanged($event)"
   ></app-project-member-management>
+
+  <app-project-configuration
+    *ngIf="configuredProject"
+    [project]="configuredProject"
+    (closed)="closeProjectConfiguration()"
+  ></app-project-configuration>
 </div>

@@ -6,6 +6,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { WorkspaceRoutingModule } from './workspace-routing.module';
 import { WorkspaceComponent } from './workspace.component';
 import { ProjectMemberManagementComponent } from './project-member-management/project-member-management.component';
+import { ProjectConfigurationComponent } from './project-configuration/project-configuration.component';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { ProjectMemberManagementComponent } from './project-member-management/pr
     SidebarComponent,
     ContentComponent,
     ProjectMemberManagementComponent,
+    ProjectConfigurationComponent,
   ],
   imports: [
     CommonModule,

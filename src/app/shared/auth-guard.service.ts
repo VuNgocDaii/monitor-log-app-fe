@@ -1,47 +1,17 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { IAuthModel, INIT_AUTH_MODEL } from '../models/auth-model';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthStateService } from './app-state/auth-state.service';
-import { NotificationService } from './notification.service';
-import { Roles, StorageKeys } from './constants/constants';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate, OnDestroy {
-  protected _authSubscription: Subscription;
-  currentUser = INIT_AUTH_MODEL;
+export class AuthGuard implements CanActivate {
+  constructor(private router: Router, private authState: AuthStateService) {}
 
-  constructor(private router: Router, private notification: NotificationService, private authState: AuthStateService) {
-    this._authSubscription = this.authState.subscribe((m: IAuthModel) => {
-      this.currentUser = m;
-        console.log(m);
-    });
-  }
-
-  public ngOnDestroy(): void {
-    // this._authSubscription.unsubscribe();
-  }
-
-  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-    // const token = localStorage.getItem(StorageKeys.TOKEN);
-    // // console.log(route.data['role']);
-    // if (route.data['role']) {
-    //   if (route.data['role'].includes(this.currentUser.role)) {
-    //     return true;
-    //   }
-
-    //   if (route.routeConfig?.path === 'admin' && this.currentUser.role && this.currentUser.role == Roles.Editor) {
-    //     this.router.navigate(['/']);
-    //     return false;
-    //   }
-    // } else if (this.currentUser.id) {
-
-    //   return true;
-    // }
-    // this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    // return false;
-    return true;
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    if (this.authState.isAuthenticated()) {
+      return true;
+    }
+    return this.router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 }
