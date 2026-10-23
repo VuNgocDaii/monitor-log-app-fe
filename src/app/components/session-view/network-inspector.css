@@ -1,0 +1,237 @@
+.network-layout {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.network-layout.list-only {
+  grid-template-rows: minmax(0,1fr);
+}
+
+.network-layout.has-detail {
+  grid-template-rows: minmax(120px, calc(100% - var(--network-detail-height,42%) - 7px)) 7px minmax(120px,var(--network-detail-height,42%));
+}
+
+.network-list-pane {
+  min-height: 0;
+  overflow: auto;
+}
+
+.network-detail-pane {
+  min-height: 0;
+  overflow: hidden;
+  background: var(--monitor-surface);
+}
+
+.network-table-wrap {
+  overflow: auto;
+}
+
+.network-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+  font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.network-table th, .network-table td {
+  height: 32px;
+  max-width: 220px;
+  padding: 6px 10px;
+  overflow: hidden;
+  border-right: 1px solid var(--monitor-line);
+  border-bottom: 1px solid var(--monitor-line);
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.network-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--monitor-canvas);
+  color: var(--monitor-text-muted);
+  font-weight: 400;
+}
+
+.network-table th:nth-child(2), .network-table td:nth-child(2) {
+  min-width: 160px;
+}
+
+.network-table tbody tr {
+  cursor: pointer;
+}
+
+.network-table tbody tr:hover td {
+  background: var(--monitor-surface-raised);
+}
+
+.network-table tbody tr.network-selected td {
+  background: var(--monitor-accent-soft);
+  color: var(--monitor-accent);
+}
+
+.network-table .network-error {
+  background: var(--monitor-danger-soft);
+  color: var(--monitor-danger);
+}
+
+.waterfall {
+  display: block;
+  width: var(--w);
+  min-width: 4px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--monitor-accent);
+}
+
+.network-horizontal-splitter {
+  position: relative;
+  z-index: 4;
+  height: 7px;
+  border-block: 1px solid var(--monitor-line);
+  background: var(--monitor-canvas);
+  cursor: row-resize;
+  touch-action: none;
+}
+
+.network-horizontal-splitter:hover, .network-horizontal-splitter.dragging {
+  background: var(--monitor-accent-soft);
+}
+
+.network-horizontal-splitter span {
+  position: absolute;
+  top: 2px;
+  left: calc(50% - 17px);
+  width: 34px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--monitor-text-muted);
+}
+
+.network-detail {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.network-detail-title {
+  display: flex;
+  padding: 12px;
+  flex: 0 0 auto;
+  gap: 8px;
+  border-bottom: 1px solid var(--monitor-line);
+  font-size: 11px;
+}
+
+.network-detail-title span {
+  color: var(--monitor-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.network-detail-tabs {
+  display: flex;
+  min-height: 40px;
+  padding: 0 8px;
+  flex: 0 0 auto;
+  gap: 3px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--monitor-line);
+  background: var(--monitor-canvas);
+}
+
+.network-detail-tabs button {
+  padding: 10px 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--monitor-text-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.network-detail-tabs button.active {
+  border-bottom-color: var(--monitor-accent);
+  color: var(--monitor-accent);
+}
+
+.network-detail-body {
+  min-height: 0;
+  padding: 16px 12px;
+  flex: 1;
+  overflow: auto;
+}
+
+.network-detail-empty {
+  padding: 24px;
+  color: var(--monitor-text-muted);
+}
+
+.network-detail-section {
+  margin-bottom: 20px;
+}
+
+.network-detail-section h4 {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--monitor-line);
+  color: var(--monitor-text);
+  font-size: 12px;
+}
+
+.network-kv {
+  display: grid;
+  gap: 6px;
+}
+
+.network-kv-row {
+  display: grid;
+  grid-template-columns: minmax(100px,34%) minmax(0,1fr);
+  gap: 12px;
+  font: 11px/1.6 ui-monospace, monospace;
+}
+
+.network-kv-row b {
+  color: var(--monitor-text-muted);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.network-kv-row span {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.network-code {
+  max-height: 420px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--monitor-line);
+  border-radius: 6px;
+  background: var(--monitor-canvas);
+  color: var(--monitor-text);
+  font: 11px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.network-body-error, .network-body-warning {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.network-body-error {
+  background: var(--monitor-danger-soft);
+  color: var(--monitor-danger);
+}
+
+.network-body-warning {
+  margin-bottom: 10px;
+  background: var(--monitor-warning-soft);
+  color: var(--monitor-warning);
+}

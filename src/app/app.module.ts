@@ -15,6 +15,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AppConfigService } from './shared/app-config.service';
 import { NgIdleModule } from '@ng-idle/core';
 import { LoadingModule } from './shared/components/loading/loading.module';
+import { NotificationModule } from './shared/components/notification/notification.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -42,7 +43,8 @@ export function initAppConfig(appConfigService: AppConfigService) {
         }
       }),
       NgIdleModule.forRoot(),
-      LoadingModule
+      LoadingModule,
+      NotificationModule
 
     ],
     providers: [

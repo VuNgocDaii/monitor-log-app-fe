@@ -1,33 +1,13 @@
 <aside class="sidebar" [class.sidebar--collapsed]="collapsed">
   <header class="workspace-header">
-    <!-- <div class="workspace-avatar">V</div> -->
-    <strong class="workspace-name">{{ currentUser?.fullName }}'s Space</strong>
+
+    <strong class="workspace-name">{{ currentUser?.fullName || currentUser?.username || 'Monitor Log' }}</strong>
 
     <button type="button" class="header-button" [attr.aria-label]="collapsed ? 'Mở sidebar' : 'Thu gọn sidebar'"
       (click)="toggleSidebar()">
       <i [class]="collapsed ? 'pi pi-angle-double-right' : 'pi pi-angle-double-left'"></i>
     </button>
   </header>
-
-  <!-- <div class="quick-menu">
-    <button type="button" class="quick-item active">
-      <i class="pi pi-home"></i>
-      <span class="sidebar-label">Home</span>
-    </button>
-
-    <button type="button" class="quick-icon" aria-label="Tin nhắn">
-      <i class="pi pi-comment"></i>
-    </button>
-    <button type="button" class="quick-icon" aria-label="Ghi âm">
-      <i class="pi pi-microphone"></i>
-    </button>
-    <button type="button" class="quick-icon" aria-label="Hộp thư">
-      <i class="pi pi-inbox"></i>
-    </button>
-    <button type="button" class="quick-icon search-button" aria-label="Tìm kiếm">
-      <i class="pi pi-search"></i>
-    </button>
-  </div> -->
 
   <nav class="navigation" aria-label="Workspace navigation" (scroll)="closeProjectMenu()">
     <section *ngFor="let section of sections" class="menu-section">
@@ -39,11 +19,9 @@
           [attr.title]="projectStatusFilter === 'active' ? 'Xem dự án đã lưu trữ' : 'Xem dự án đang hoạt động'"
           (click)="toggleProjectStatusFilter()">
           <i class="pi" [ngClass]="projectStatusFilter === 'active' ? 'pi-inbox' : 'pi-folder-open'"></i>
-          <span class="sidebar-label">{{ projectStatusFilter === 'active' ? 'Đã lưu trữ' : 'Đang hoạt động' }}</span>
+          <span class="sidebar-label">{{ projectStatusFilter === 'active' ? 'Lưu trữ' : 'Đang hoạt động' }}</span>
         </button>
       </div>
-      <!-- <p *ngIf="section.id === 'projects' && projectStatusFilter === 'archived' && !collapsed"
-        class="project-list-caption">Dự án đã lưu trữ</p> -->
 
       <div *ngFor="let item of section.items; trackBy: trackMenuItem" class="project-row"
         [class.active]="activeItemId === item.id">
@@ -63,9 +41,9 @@
       </div>
 
       <ng-container *ngIf="section.id === 'projects'">
-        <p *ngIf="loadingProjects" class="project-feedback" role="status" title="Đang tải project">
+        <p *ngIf="loadingProjects" class="project-feedback" role="status" title="Đang tải dự án">
           <i class="pi pi-spinner pi-spin" aria-hidden="true"></i>
-          <span class="sidebar-label">Đang tải project...</span>
+          <span class="sidebar-label">Đang tải dự án...</span>
         </p>
 
         <div *ngIf="projectListError" class="project-load-error">
@@ -73,50 +51,50 @@
             <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
             <span class="sidebar-label">{{ projectListError }}</span>
           </p>
-          <button type="button" class="menu-item" aria-label="Tải lại danh sách project" [disabled]="loadingProjects"
+          <button type="button" class="menu-item" aria-label="Tải lại danh sách dự án" [disabled]="loadingProjects"
             (click)="retryLoadProjects()">
             <i class="pi pi-refresh menu-icon"></i>
-            <span class="sidebar-label">Thử lại</span>
+            <span class="sidebar-label">Tải lại</span>
           </button>
         </div>
 
         <p *ngIf="!loadingProjects && !projectListError && !section.items.length" class="project-feedback"
-          title="Chưa có project" role="status">
+          title="Chưa có dự án" role="status">
           <i class="pi pi-folder-open" aria-hidden="true"></i>
           <span class="sidebar-label">{{ projectStatusFilter === 'archived' ? 'Chưa có dự án đã lưu trữ' : 'Chưa có
-            project' }}</span>
+            dự án' }}</span>
         </p>
 
         <button *ngIf="hasMoreProjects && !projectListError" type="button" class="menu-item"
-          [disabled]="loadingProjects" aria-label="Xem thêm project" (click)="loadProjects()">
+          [disabled]="loadingProjects" aria-label="Xem thêm dự án" (click)="loadProjects()">
           <i class="pi pi-angle-down menu-icon"></i>
-          <span class="sidebar-label">Xem thêm</span>
+          <span class="sidebar-label">Tải thêm</span>
         </button>
       </ng-container>
 
       <button *ngIf="section.allowAdd && projectStatusFilter !== 'archived'" #addProjectButton type="button" class="menu-item add-item"
-        aria-label="Tạo project mới" [attr.title]="collapsed ? 'Tạo project mới' : null"
+        aria-label="Tạo dự án mới" [attr.title]="collapsed ? 'Tạo dự án mới' : null"
         [attr.aria-expanded]="showCreateProject && !collapsed" aria-controls="sidebar-create-project"
         (click)="openCreateProject()">
         <i class="pi pi-plus menu-icon"></i>
-        <span class="sidebar-label">Add new</span>
+        <span class="sidebar-label">Tạo dự án</span>
       </button>
 
       <form *ngIf="section.id === 'projects' && showCreateProject && !collapsed" id="sidebar-create-project"
         class="project-create-form" novalidate [attr.aria-busy]="creatingProject" aria-labelledby="sidebar-create-title"
         (submit)="createProject($event)" (keydown.escape)="closeCreateProject()">
-        <strong id="sidebar-create-title" class="project-form-title">Tạo project</strong>
+        <strong id="sidebar-create-title" class="project-form-title">Tạo dự án</strong>
 
-        <label for="sidebar-project-name">Tên project <span aria-hidden="true">*</span></label>
+        <label for="sidebar-project-name">Tên dự án <span aria-hidden="true">*</span></label>
         <input #projectNameInput id="sidebar-project-name" name="projectName" type="text" maxlength="255" required
           autocomplete="off" placeholder="" [value]="newProjectName" [disabled]="creatingProject"
           (input)="newProjectName = projectNameInput.value" />
 
-        <label for="sidebar-project-key">Mã project <span aria-hidden="true">*</span></label>
+        <label for="sidebar-project-key">Mã dự án <span aria-hidden="true">*</span></label>
         <input #projectKeyInput id="sidebar-project-key" name="projectKey" type="text" maxlength="20" required
           autocomplete="off" placeholder="" aria-describedby="sidebar-project-key-hint"
           [value]="newProjectKey" [disabled]="creatingProject" (input)="newProjectKey = projectKeyInput.value" />
-        <!-- <small id="sidebar-project-key-hint">Mã được viết hoa và cố định sau khi tạo.</small> -->
+        <small id="sidebar-project-key-hint">Bắt đầu bằng chữ cái; tối đa 20 ký tự. Mã cố định sau khi tạo.</small>
 
         <label for="sidebar-project-description">Mô tả</label>
         <textarea #projectDescriptionInput id="sidebar-project-description" name="description" rows="3"
@@ -130,37 +108,15 @@
             (click)="closeCreateProject()">Hủy</button>
           <button type="submit" class="project-save-button" [disabled]="creatingProject">
             <i *ngIf="creatingProject" class="pi pi-spinner pi-spin" aria-hidden="true"></i>
-            {{ creatingProject ? 'Đang tạo...' : 'Tạo project' }}
+            {{ creatingProject ? 'Đang tạo...' : 'Tạo dự án' }}
           </button>
         </div>
       </form>
     </section>
   </nav>
 
-  <!-- <footer class="sidebar-footer">
-    <div class="invite-card">
-      <i class="pi pi-user-plus"></i>
-      <div class="invite-content">
-        <strong>Invite members</strong>
-        <small>Collaborate with your team.</small>
-      </div>
-      <button type="button" aria-label="Đóng"><i class="pi pi-times"></i></button>
-    </div>
-
-    <div class="new-chat-wrapper">
-      <button type="button" class="new-chat">
-        <i class="pi pi-star"></i>
-        <span class="sidebar-label">New chat</span>
-        <kbd>Ctrl+O</kbd>
-      </button>
-      <button type="button" class="compose-button" aria-label="Tạo mới">
-        <i class="pi pi-pencil"></i>
-      </button>
-    </div>
-  </footer> -->
 </aside>
 
-<!-- Đặt ngoài vùng cuộn sidebar để menu không bị cắt ở cuối danh sách. -->
 <div *ngIf="openedProjectMenu as item" #projectActionsMenu id="sidebar-project-actions" class="project-actions-menu"
   role="menu" [attr.aria-label]="'Thao tác với ' + item.label" [style.left.px]="projectMenuLeft"
   [style.top.px]="projectMenuTop" (click)="$event.stopPropagation()" (keydown)="onProjectMenuKeydown($event)">
@@ -187,7 +143,6 @@
   </button>
 </div>
 
-<!-- Native dialog giữ focus trong popup và hiển thị trên vùng overflow của sidebar. -->
 <dialog #projectDialog class="project-dialog" aria-labelledby="project-dialog-title"
   (cancel)="onProjectDialogCancel($event)" (click)="onProjectDialogBackdropClick($event)">
   <div class="project-dialog-card" [attr.aria-busy]="loadingProjectDetails || savingProject">
@@ -241,18 +196,7 @@
             <dt>Mô tả</dt>
             <dd class="project-description">{{ project.description || 'Chưa có mô tả' }}</dd>
           </div>
-          <!-- <div class="project-detail-wide">
-            <dt>ID dự án</dt>
-            <dd class="project-id-value">{{ project.projectId }}</dd>
-          </div>
-          <div class="project-detail-wide">
-            <dt>ID người tạo</dt>
-            <dd class="project-id-value">{{ project.createdBy || '—' }}</dd>
-          </div> -->
-          <!-- <div *ngIf="project.updatedBy" class="project-detail-wide">
-            <dt>ID người cập nhật</dt>
-            <dd class="project-id-value">{{ project.updatedBy }}</dd>
-          </div> -->
+
         </dl>
       </div>
 
@@ -261,7 +205,7 @@
         <label for="project-edit-key">Mã dự án</label>
         <input id="project-edit-key" type="text" [value]="project.projectKey" readonly
           aria-describedby="project-edit-key-hint" />
-        <!-- <small id="project-edit-key-hint">Mã dự án cố định sau khi tạo.</small> -->
+        <small id="project-edit-key-hint">Mã dự án cố định sau khi tạo.</small>
         <label for="project-edit-name">Tên dự án <span aria-hidden="true">*</span></label>
         <input #editProjectName id="project-edit-name" name="projectName" type="text" required maxlength="255"
           [value]="editedProjectName" [disabled]="savingProject" (input)="editedProjectName = editProjectName.value" />

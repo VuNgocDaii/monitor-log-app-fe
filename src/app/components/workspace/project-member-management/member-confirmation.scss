@@ -1,0 +1,73 @@
+.dialog-header, .panel-header, .project-heading, .header-actions, .user-row, .confirm-actions {
+  display: flex;
+  align-items: center;
+}
+
+.alert--error, .confirm-error {
+  color: var(--monitor-danger);
+  background: var(--monitor-danger-soft);
+}
+
+.confirm-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: var(--monitor-backdrop);
+  overflow: auto;
+}
+
+.confirm-overlay--top {
+  z-index: 2;
+}
+
+.confirm-dialog {
+  width: min(400px, 100%);
+  padding: 28px;
+  border: 1px solid var(--monitor-line);
+  border-radius: 12px;
+  background: var(--monitor-surface);
+  color: var(--monitor-text);
+}
+
+.confirm-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 20px;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--monitor-danger);
+  background: var(--monitor-danger-soft);
+  font-size: 20px;
+}
+
+.confirm-icon--add {
+  color: var(--monitor-accent);
+  background: var(--monitor-accent-soft);
+}
+
+.confirm-dialog h3 {
+  margin: 0;
+  color: var(--monitor-text);
+  font-size: 20px;
+}
+
+.confirm-dialog p {
+  margin: 12px 0 24px;
+  color: var(--monitor-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.confirm-dialog .confirm-error {
+  padding: 10px;
+  border-radius: 8px;
+  color: var(--monitor-danger);
+}
+
+.confirm-actions {
+  justify-content: flex-end;
+  gap: 10px;
+}

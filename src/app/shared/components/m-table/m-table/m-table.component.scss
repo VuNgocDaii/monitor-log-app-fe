@@ -1,3 +1,1 @@
-:host ::ng-deep tbody tr:nth-child(even) {
-  background-color: rgb(245, 245, 245);
-}
+:host { display: block; border: 1px solid var(--monitor-line); border-radius: 10px; overflow: hidden; }

@@ -1,0 +1,247 @@
+.project-dialog {
+  box-sizing: border-box;
+  width: min(580px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  color: var(--monitor-text);
+  background: var(--monitor-surface);
+  border: 1px solid var(--monitor-line);
+  border-radius: 12px;
+  box-shadow: 0 20px 70px #0007;
+  color-scheme: dark;
+
+  &::backdrop {
+    background: var(--monitor-backdrop);
+  }
+
+  button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--monitor-accent);
+    outline-offset: 2px;
+  }
+}
+
+.project-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--monitor-line);
+
+  h2 {
+    margin: 0;
+    color: var(--monitor-text);
+    font-size: 17px;
+    line-height: 1.4;
+  }
+}
+
+.project-dialog-close {
+  display: grid;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  color: #ccc;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--monitor-line);
+  }
+}
+
+.project-dialog-body {
+  padding: 20px;
+}
+
+.project-dialog-loading {
+  padding: 32px 20px;
+  color: var(--monitor-text-muted);
+  font-size: 13px;
+}
+
+.project-detail-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+
+  h3 {
+    flex: 1 1 200px;
+    min-width: 0;
+    margin: 0;
+    color: var(--monitor-text);
+    font-size: 19px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+}
+
+.project-status-badge {
+  padding: 4px 9px;
+  color: var(--monitor-success);
+  background: var(--monitor-success-soft);
+  border-radius: 12px;
+  font-size: 11px;
+  white-space: nowrap;
+
+  &.archived {
+    color: #d6d6d6;
+    background: var(--monitor-line);
+  }
+}
+
+.project-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+
+  dt {
+    margin-bottom: 6px;
+    color: var(--monitor-text-muted);
+    font-size: 12px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+}
+
+.project-detail-wide {
+  grid-column: 1 / -1;
+}
+
+.project-description {
+  white-space: pre-wrap;
+}
+
+.project-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  label {
+    margin-top: 5px;
+    font-size: 13px;
+  }
+
+  input,
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    color: var(--monitor-text);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--monitor-canvas);
+    border: 1px solid var(--monitor-line);
+    border-radius: 6px;
+
+    &:focus-visible {
+      outline: 2px solid var(--monitor-accent);
+      outline-offset: 1px;
+    }
+
+    &[readonly] {
+      color: var(--monitor-text-muted);
+      background: var(--monitor-surface-raised);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+
+  small {
+    color: var(--monitor-text-muted);
+    font-size: 11px;
+  }
+}
+
+.project-dialog-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 15px 20px;
+  border-top: 1px solid var(--monitor-line);
+}
+
+.project-primary-action,
+.project-secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 14px;
+  gap: 7px;
+  font-size: 13px;
+  border: 1px solid var(--monitor-line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.project-primary-action {
+  color: var(--monitor-surface);
+  background: var(--monitor-accent);
+}
+
+.project-secondary-action {
+  color: var(--monitor-text);
+  background: transparent;
+}
+
+.project-dialog-error {
+  margin: 0;
+  padding: 0 20px 16px;
+}
+
+.project-confirm-body p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.project-confirm-body .project-confirm-hint {
+  margin: 0;
+  color: var(--monitor-text-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .project-dialog {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+  }
+
+  .project-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-dialog-header,
+  .project-dialog-body,
+  .project-dialog-footer {
+    padding: 16px;
+  }
+}

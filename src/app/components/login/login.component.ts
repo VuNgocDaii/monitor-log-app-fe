@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     author: '',
   };
   loading = false;
+  showPassword = false;
   sub!: Subscription;
   messageError!: string;
   returnUrl!: string;

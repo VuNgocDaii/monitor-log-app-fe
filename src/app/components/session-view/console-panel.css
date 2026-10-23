@@ -1,0 +1,163 @@
+.console-list {
+  width: 100%;
+  min-width: 0;
+}
+
+.console-row {
+  display: grid;
+  min-height: 58px;
+  grid-template-columns: 52px 24px minmax(0,1fr);
+  border-bottom: 1px solid var(--monitor-line);
+  color: var(--monitor-text);
+}
+
+.console-row:hover {
+  background: var(--monitor-surface-raised);
+}
+
+.console-row.level-error {
+  background: var(--monitor-danger-soft);
+  color: var(--monitor-danger);
+}
+
+.console-row.level-warn, .console-row.level-warning {
+  background: var(--monitor-warning-soft);
+}
+
+.console-gutter {
+  padding: 14px 6px;
+  border-right: 1px solid var(--monitor-line);
+  background: var(--monitor-canvas);
+}
+
+.console-time {
+  display: block;
+  color: var(--monitor-text-muted);
+  font: 10px/1.5 ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+.console-level-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  margin: 13px 3px 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--monitor-line);
+  border-radius: 5px;
+  color: var(--monitor-text-muted);
+  font: 700 10px ui-monospace, monospace;
+}
+
+.console-level-icon.icon-error {
+  color: var(--monitor-danger);
+  border-color: var(--monitor-danger);
+}
+
+.console-level-icon.icon-warn, .console-level-icon.icon-warning {
+  color: var(--monitor-warning);
+  border-color: var(--monitor-warning);
+}
+
+.console-level-icon.icon-info, .console-level-icon.icon-debug {
+  color: var(--monitor-accent);
+  border-color: var(--monitor-accent);
+}
+
+.console-entry {
+  min-width: 0;
+  padding: 10px 12px 12px 8px;
+}
+
+.console-entry-top {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 8px;
+}
+
+.console-level-badge {
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--monitor-surface-raised);
+  color: var(--monitor-text-muted);
+  font: 10px ui-monospace, monospace;
+}
+
+.console-level-badge.badge-error {
+  color: var(--monitor-danger);
+}
+
+.console-level-badge.badge-warn, .console-level-badge.badge-warning {
+  color: var(--monitor-warning);
+}
+
+.console-level-badge.badge-debug, .console-level-badge.badge-info {
+  color: var(--monitor-accent);
+}
+
+.console-source {
+  max-width: 65%;
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--monitor-text-muted);
+  font: 10px/1.4 ui-monospace, monospace;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.console-source:hover {
+  color: var(--monitor-accent);
+  text-decoration: underline;
+}
+
+.console-message {
+  max-height: 160px;
+  margin: 8px 0 0;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 12px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.console-message.structured {
+  max-height: 220px;
+  padding: 10px;
+  border: 1px solid var(--monitor-line);
+  border-radius: 6px;
+  background: var(--monitor-canvas);
+  color: var(--monitor-text);
+}
+
+.console-empty {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.console-empty-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--monitor-line);
+  border-radius: 10px;
+  color: var(--monitor-accent);
+  font: 18px ui-monospace, monospace;
+}
+
+.console-empty strong {
+  color: var(--monitor-text);
+}
+
+.console-empty span {
+  font-size: 12px;
+}

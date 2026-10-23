@@ -3,8 +3,9 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'app-loading',
   template: `
-    <div *ngIf="isLoading" class="loading-overlay">
-      <div class="loading-spinner"></div>
+    <div *ngIf="isLoading" class="loading-overlay" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Đang xử lý...</span>
     </div>
   `,
   styles: [`
@@ -14,17 +15,20 @@ import { Component, Input } from '@angular/core';
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: var(--monitor-backdrop);
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      gap: 16px;
+      color: var(--monitor-text);
       z-index: 9999;
     }
     .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 3px solid #fff;
-      border-top: 3px solid #007bff;
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--monitor-line);
+      border-top-color: var(--monitor-accent);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }

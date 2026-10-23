@@ -1,13 +1,19 @@
 <main class="review-page">
-  <div class="state-layer" *ngIf="loading">
-    <span class="spinner"></span>
-    <strong>Loading...</strong>
+  <header class="session-header">
+    <a class="session-brand" routerLink="/workspace"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3v18h18M6 15l4-5 4 3 6-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Monitor Log</a>
+    <div class="session-heading"><strong>Xem lại session</strong><code>{{ sessionId }}</code></div>
+    <a class="session-back" routerLink="/workspace">Về workspace</a>
+  </header>
+  <div class="state-layer" *ngIf="loading" role="status">
+    <span class="spinner" aria-hidden="true"></span>
+    <strong>Đang tải session...</strong>
+    <span>Đang chuẩn bị hình ảnh và dữ liệu ghi nhận.</span>
   </div>
 
-  <div class="state-layer error" *ngIf="!loading && errorMessage">
-    <strong>Unable to load report</strong>
+  <div class="state-layer error" *ngIf="!loading && errorMessage" role="alert">
+    <strong>Không thể tải session</strong>
     <span>{{ errorMessage }}</span>
-    <button type="button" (click)="loadSession()">Try again</button>
+    <button type="button" (click)="loadSession()">Thử lại</button>
   </div>
 
   <section
@@ -21,9 +27,7 @@
     <section class="left-column">
       <ng-container *ngIf="selectedMedia as media; else noMedia">
         <section id="videoView" class="main-panel view-main-panel" *ngIf="isVideo(media)">
-          <div class="top-bar">
-            <button class="icon-button" type="button" (click)="closeView()">×</button>
-          </div>
+          <div class="media-heading"><strong>Video ghi nhận</strong><span>{{ media.fileName }}</span></div>
 
           <div class="video-shell" [class.controls-visible]="!isPlaying">
             <video
@@ -43,7 +47,7 @@
 
             <div class="video-controls">
               <input
-                aria-label="Seek"
+                aria-label="Vị trí phát video"
                 class="video-seek"
                 type="range"
                 min="0"
@@ -53,11 +57,11 @@
 
               <div class="video-controls-row">
                 <div class="video-controls-left">
-                  <button class="video-control-btn" type="button" title="Play/Pause (Space/K)" (click)="togglePlay()">
+                  <button class="video-control-btn" type="button" title="Phát / tạm dừng (Space/K)" [attr.aria-label]="isPlaying ? 'Tạm dừng' : 'Phát video'" (click)="togglePlay()">
                     {{ isPlaying ? 'Ⅱ' : '▶' }}
                   </button>
-                  <button class="video-control-btn" type="button" title="Back 5 seconds (←)" (click)="seekRelative(-5)">↶5</button>
-                  <button class="video-control-btn" type="button" title="Forward 5 seconds (→)" (click)="seekRelative(5)">5↷</button>
+                  <button class="video-control-btn" type="button" aria-label="Lùi 5 giây" title="Lùi 5 giây (←)" (click)="seekRelative(-5)">↶5</button>
+                  <button class="video-control-btn" type="button" aria-label="Tiến 5 giây" title="Tiến 5 giây (→)" (click)="seekRelative(5)">5↷</button>
                   <span class="video-time">
                     <span>{{ formatTime(currentTime) }}</span>
                     <span>/</span>
@@ -66,7 +70,7 @@
                 </div>
 
                 <div class="video-controls-right">
-                  <select class="playback-rate" title="Playback speed" [value]="playbackRate"
+                  <select class="playback-rate" aria-label="Tốc độ phát" title="Tốc độ phát" [value]="playbackRate"
                     (change)="changePlaybackRate($any($event.target).value)">
                     <option value="0.5">0.5×</option>
                     <option value="0.75">0.75×</option>
@@ -75,29 +79,28 @@
                     <option value="1.5">1.5×</option>
                     <option value="2">2×</option>
                   </select>
-                  <button class="video-control-btn" type="button" title="Fullscreen (F)" (click)="openFullscreen()">⛶</button>
+                  <button class="video-control-btn" type="button" aria-label="Toàn màn hình" title="Toàn màn hình (F)" (click)="openFullscreen()">⛶</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div class="summary-strip">
-            <span>{{ durationSeconds }} seconds</span>
-            <span>{{ consoleLogs.length }} console logs</span>
-            <span>{{ actions.length }} actions</span>
-            <span>{{ ticket.annotations?.length || 0 }} annotations</span>
+            <span>{{ durationSeconds }} giây</span>
+            <span>{{ consoleLogs.length }} console log</span>
+            <span>{{ actions.length }} thao tác</span>
+            <span>{{ ticket.annotations?.length || 0 }} chú thích</span>
           </div>
         </section>
 
         <section id="screenshotView" class="main-area view-main-area" *ngIf="isImage(media)">
-          <button class="close-button" type="button" (click)="closeView()">×</button>
+          <div class="media-heading"><strong>Ảnh ghi nhận</strong><span>Chọn ảnh để phóng to</span></div>
 
           <div class="preview-area">
-            <div class="full-shell" role="button" tabindex="0"
-              (click)="lightboxOpen = true" (keydown.enter)="lightboxOpen = true">
+            <button class="full-shell" type="button" aria-label="Phóng to ảnh ghi nhận" (click)="openLightbox()">
               <img id="mainImage" [src]="media.safePreviewUrl || media.previewUrl || media.url" [alt]="media.fileName"
                 (error)="handleMediaError('image')" />
-            </div>
+            </button>
           </div>
 
           <div id="imageThumbs" class="dual-preview-strip" *ngIf="mediaFiles.length > 1">
@@ -109,8 +112,8 @@
               (click)="selectMedia(file)">
               <img [src]="file.safePreviewUrl || file.previewUrl || file.url" [alt]="file.fileName" />
               <span>
-                <b>{{ index === 0 ? 'Screenshot' : 'Full screen' }}</b>
-                <!-- <small>{{ file.fileName }}</small> -->
+                <b>Ảnh {{ index + 1 }}</b>
+                <small>{{ file.fileName }}</small>
               </span>
             </button>
           </div>
@@ -119,21 +122,23 @@
 
       <ng-template #noMedia>
         <section class="main-area view-main-area">
-          <div class="preview-area"><div class="dev-empty">No image or video file.</div></div>
+          <div class="preview-area"><div class="dev-empty">Session này không có hình ảnh hoặc video.</div></div>
         </section>
       </ng-template>
 
       <section class="ticket-card view-ticket-card">
-        <input class="title-input" readonly [value]="ticket.title || ''" placeholder="Title" />
-        <textarea class="description-input" readonly [value]="ticket.description || ''" placeholder="Description"></textarea>
-        <div class="status" [class.media-status-error]="statusMessage">{{ statusMessage }}</div>
+        <label for="session-title">Tiêu đề ghi nhận</label>
+        <input id="session-title" class="title-input" readonly [value]="ticket.title || ''" placeholder="Chưa có tiêu đề" />
+        <label for="session-description">Mô tả</label>
+        <textarea id="session-description" class="description-input" readonly [value]="ticket.description || ''" placeholder="Chưa có mô tả"></textarea>
+        <div class="status" [class.media-status-error]="statusMessage" role="status">{{ statusMessage }}</div>
       </section>
     </section>
 
     <div
       class="workspace-splitter"
       [class.dragging]="dragging"
-      title="Drag to resize"
+      title="Kéo để thay đổi chiều rộng"
       (pointerdown)="startResize($event)">
     </div>
 
@@ -142,12 +147,12 @@
     </aside>
   </section>
 
-  <div class="image-lightbox" [class.hidden]="!lightboxOpen" (click)="lightboxOpen = false">
-    <button class="image-lightbox-close" type="button" (click)="lightboxOpen = false">×</button>
+  <dialog #imageLightbox class="image-lightbox" aria-label="Ảnh ghi nhận phóng to" (close)="lightboxOpen = false" (click)="closeLightboxOnBackdrop($event)">
+    <button class="image-lightbox-close" type="button" aria-label="Đóng ảnh phóng to" (click)="imageLightbox.close()">×</button>
     <img
       *ngIf="selectedMedia as lightboxMedia"
       [src]="lightboxMedia.safePreviewUrl || lightboxMedia.previewUrl || lightboxMedia.url"
       [alt]="lightboxMedia.fileName"
       (click)="$event.stopPropagation()" />
-  </div>
+  </dialog>
 </main>

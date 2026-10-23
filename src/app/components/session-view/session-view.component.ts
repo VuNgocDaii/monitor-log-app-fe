@@ -31,6 +31,8 @@ interface TicketPayload {
     './review.css',
     './screenshot-review.css',
     './devtools-panel.css',
+    './network-inspector.css',
+    './console-panel.css',
     './session-view.component.scss'
   ],
   encapsulation: ViewEncapsulation.ShadowDom
@@ -39,6 +41,7 @@ export class SessionViewComponent implements OnInit, OnDestroy {
   @ViewChild('workspace') workspace?: ElementRef<HTMLElement>;
   @ViewChild('video') video?: ElementRef<HTMLVideoElement>;
   @ViewChild('devtoolsRoot') devtoolsRoot?: ElementRef<HTMLElement>;
+  @ViewChild('imageLightbox', { static: true }) imageLightbox!: ElementRef<HTMLDialogElement>;
 
   sessionId = '';
   session: SessionFilesResponse | null = null;
@@ -204,11 +207,24 @@ export class SessionViewComponent implements OnInit, OnDestroy {
 
   stopResize(): void { this.dragging = false; }
 
+  openLightbox(): void {
+    this.lightboxOpen = true;
+    this.imageLightbox.nativeElement.showModal();
+  }
+
+  closeLightboxOnBackdrop(event: MouseEvent): void {
+    if (event.target === this.imageLightbox.nativeElement) {
+      this.imageLightbox.nativeElement.close();
+    }
+  }
+
   @HostListener('document:keydown', ['$event'])
   handleKeyboard(event: KeyboardEvent): void {
-    const target = event.target as HTMLElement | null;
+    if (this.lightboxOpen) return;
+    const target = event.composedPath()[0] as HTMLElement | null;
     if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement ||
-      target instanceof HTMLSelectElement || target?.isContentEditable ||
+      target instanceof HTMLSelectElement || target instanceof HTMLButtonElement ||
+      target instanceof HTMLAnchorElement || target?.isContentEditable ||
       !this.selectedMedia || !this.isVideo(this.selectedMedia)) return;
 
     if (event.code === 'Space' || event.key.toLowerCase() === 'k') {

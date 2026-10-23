@@ -215,6 +215,13 @@ export class ProjectConfigurationComponent implements OnInit, OnDestroy {
 
   close(): void { if (!this.saving) this.closed.emit(); }
 
+  onEscape(event: Event): void {
+    event.stopPropagation();
+    if (this.saving) return;
+    if (this.editorOpen) this.cancelEditor();
+    else this.close();
+  }
+
   private errorMessage(error: HttpErrorResponse, fallback: string): string {
     const body = error?.error;
     if (body?.errors && typeof body.errors === 'object') {

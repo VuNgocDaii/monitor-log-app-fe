@@ -11,6 +11,7 @@ import { NotificationService } from 'src/app/shared/notification.service';
 @Component({
   selector: 'app-change-required-password',
   templateUrl: './change-required-password.component.html',
+  styleUrls: ['./login.component.scss'],
 })
 export class ChangeRequiredPasswordComponent implements OnInit, OnDestroy {
   readonly form = this.formBuilder.group({

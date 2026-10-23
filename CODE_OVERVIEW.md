@@ -1,8 +1,8 @@
 # Tổng quan mã nguồn Monitor Log Frontend
 
-Ngày đọc code: 22/10/2026.
+Ngày đọc code ban đầu: 22/10/2026. Cập nhật tài liệu sau đợt restyle: 23/10/2026.
 
-Tài liệu mô tả code hiện có trong repository, tập trung vào cấu trúc Angular, đăng nhập, workspace, sidebar quản lý dự án, quản lý thành viên và xem session. Đã build frontend với cấu hình development; chưa kiểm chứng runtime với backend triển khai.
+Tài liệu mô tả code hiện có trong repository, tập trung vào cấu trúc Angular, đăng nhập, workspace, sidebar quản lý dự án, quản lý thành viên và xem session. Sau restyle đã build production thành công không có cảnh báo và kiểm tra giao diện bằng Chrome với dữ liệu giả lập; chưa kiểm chứng với backend triển khai. Chi tiết thay đổi và phạm vi kiểm tra nằm ở mục 13.
 
 ## 1. Mục đích và trạng thái hiện tại
 
@@ -13,7 +13,7 @@ Frontend hiện phục vụ hai nhóm chức năng:
 
 README cũ gọi dự án là DriverSchool, còn tên package và Angular project là `fta-index`. Vì vậy README chưa phản ánh đầy đủ chức năng hiện tại.
 
-Phần nội dung chính của workspace chưa triển khai giao diện nghiệp vụ: phần lớn HTML trong `content.component.html` đang bị comment. Chọn dự án cập nhật state trong component cha nhưng chưa hiển thị danh sách ticket hoặc chi tiết nghiệp vụ ở vùng nội dung.
+Workspace đã có màn tổng quan khi chọn dự án: tên, mã, mô tả, trạng thái, số ticket chưa lưu trữ, số thành viên và ngày cập nhật/ngày tạo. Có nút mở quản lý thành viên và cấu hình dự án. Khi chưa chọn dự án, màn hướng dẫn có nút tạo dự án. Danh sách ticket và chi tiết ticket chưa được triển khai trong vùng nội dung này.
 
 ## 2. Công nghệ
 
@@ -41,8 +41,9 @@ src/
 │   │   ├── login/                    # Form đăng nhập
 │   │   ├── workspace/
 │   │   │   ├── sidebar/              # Danh sách và thao tác dự án
-│   │   │   ├── content/              # Vùng nội dung, hiện chủ yếu bị comment
-│   │   │   └── project-member-management/
+│   │   │   ├── content/              # Tổng quan dự án và màn hướng dẫn
+│   │   │   ├── project-member-management/
+│   │   │   └── project-configuration/ # Module và trạng thái ticket
 │   │   ├── session-view/             # Ảnh/video và DevTools telemetry
 │   │   ├── no-permission/            # Trang 403
 │   │   └── not-found/                # Trang 404
@@ -84,12 +85,12 @@ Các feature module được lazy load. Router dùng PathLocationStrategy, nên 
 ### Luồng đăng nhập đang hoạt động
 
 1. `LoginComponent` tạo form `username` và `password`, có validator bắt buộc.
-2. `login()` gửi dữ liệu tới `POST /auth/login`.
-3. Nếu `res.status` có giá trị truthy, component báo lỗi qua NotificationService.
-4. Nhánh còn lại lưu `res.accessToken` vào localStorage qua `StorageKeys.TOKEN` và điều hướng tới `/workspace`.
+2. `login()` chặn form invalid hoặc request đang chạy; form invalid được đánh dấu touched để hiển thị lỗi. Thông tin hợp lệ được gửi tới `POST /auth/login`.
+3. Nếu response có `mustChangePassword`, điều hướng tới `/login/change-required-password`, kèm username và returnUrl.
+4. Nếu không cần đổi mật khẩu, `AuthStateService.loginSuccess()` lưu phiên và điều hướng theo `returnUrl` (mặc định `/workspace`). Lỗi HTTP hoặc token không hợp lệ được báo qua `NotificationService`.
 5. Workspace gọi `GET /auth/me` để lấy thông tin người dùng truyền xuống sidebar và content.
 
-`returnUrl` được đọc từ query param nhưng chưa dùng khi điều hướng sau đăng nhập. Hàm `login()` hiện chưa tự chặn form invalid và chưa có callback xử lý lỗi HTTP riêng.
+Form đổi mật khẩu kiểm tra trường bắt buộc và xác nhận mật khẩu khớp nhau trước khi gọi API. Giao diện form được làm mới trong đợt restyle; logic xác thực nêu trên đã có trước đợt này.
 
 ### Tầng service
 
@@ -110,19 +111,22 @@ Component → Service nghiệp vụ → BaseService → Service → HttpClient
 
 ## 6. Workspace và sidebar
 
-`WorkspaceComponent` giữ `selectedItem`, `sidebarCollapsed`, `currentUser` và `managedProject`.
+`WorkspaceComponent` giữ `selectedItem`, `sidebarCollapsed`, `currentUser`, `managedProject` và `configuredProject`.
 
 | Sự kiện từ component con | Xử lý tại workspace |
 | --- | --- |
 | Sidebar `itemSelected` | Cập nhật mục được chọn, truyền xuống content |
 | Sidebar `collapsedChange` | Cập nhật trạng thái thu gọn |
 | Sidebar `manageProject` | Mở component quản lý thành viên |
+| Sidebar `manageProjectConfiguration` / Content `configureProject` | Mở cấu hình module và trạng thái ticket |
+| Content `manageProject` | Mở quản lý thành viên từ tổng quan dự án |
+| Content `createProject` | Gọi mở form tạo dự án ở sidebar |
 | Member management `closed` | Đóng phần quản lý |
 | Member management `memberCountChanged` | Cập nhật số thành viên của dự án đang quản lý và dự án đang chọn nếu trùng ID |
 
 ### Danh sách dự án
 
-`SidebarComponent` tải danh sách ngay trong `ngOnInit()`. Mỗi trang có 10 phần tử; nút “Xem thêm” lấy trang tiếp theo. Danh sách được gộp bằng Map theo ID để tránh trùng. Bộ lọc chuyển giữa `active` và `archived`; đổi bộ lọc sẽ reset danh sách và tải lại.
+`SidebarComponent` tải danh sách ngay trong `ngOnInit()`. Mỗi trang có 10 phần tử; nút “Tải thêm” lấy trang tiếp theo. Danh sách được gộp bằng Map theo ID để tránh trùng. Bộ lọc chuyển giữa `active` và `archived`; đổi bộ lọc sẽ reset danh sách và tải lại.
 
 Có trạng thái đang tải, danh sách rỗng, lỗi và nút thử lại. Request danh sách trước được unsubscribe khi reset; các subscription có `takeUntil(destroy$)` để kết thúc khi component bị hủy.
 
@@ -214,7 +218,7 @@ Các script `s`, `s:s`, `s:p`, `b` dùng lệnh `copy` cho Windows. Các script 
 
 ## 11. Các điểm cần lưu ý khi phát triển tiếp
 
-1. **Nội dung workspace:** triển khai content thực tế khi chọn dự án; hiện template phần nghiệp vụ đang bị comment.
+1. **Nội dung workspace:** đã có tổng quan dự án và các lối vào quản lý; cần triển khai riêng danh sách/chi tiết ticket khi có yêu cầu nghiệp vụ và API phù hợp.
 2. **Runtime backend:** API guide mới nói DI cho project đã có trong source. `500` từ môi trường triển khai cần kiểm tra deploy/restart, migration/schema nghiệp vụ và log backend trước khi thay đổi frontend.
 3. **Phân quyền:** route guard chỉ kiểm tra có phiên; quyền dữ liệu và quyền trong project phải tiếp tục do backend kiểm tra. Guide chưa có API trả effective permission theo project.
 4. **Session request cũ:** đổi route session sẽ gọi tải mới nhưng request trước chỉ được hủy khi component destroy, có khả năng response cũ cập nhật vào view mới. Loading được tắt sau bước ticket, chưa chờ toàn bộ Blob media hoàn tất.
@@ -235,4 +239,56 @@ Các script `s`, `s:s`, `s:p`, `b` dùng lệnh `copy` cho Windows. Các script 
 | Hiển thị log/DevTools | `devtools-panel.ts`, `devtools-panel.css` |
 | Địa chỉ backend | `src/assets/config/config.json`, `app-config.service.ts` |
 | Route mới | `app-routing.module.ts` và routing module của feature |
+
+## 13. Các thay đổi đã thực hiện trong đợt restyle
+
+Đợt triển khai ngày 22/10/2026 áp dụng định hướng `frontend-design`: giao diện công cụ kiểm thử/monitoring, nền navy, điểm nhấn cyan và màu trạng thái riêng. Skill được cài từ `anthropics/skills`; nguồn cài được ghi trong `skills-lock.json`. Mã Angular tiếp tục dùng Angular 14 và NgModule.
+
+### Theme và thành phần dùng chung
+
+- Tập trung token ở `src/custom-scss/monitor-theme.scss`, được import cuối `src/styles.scss` để tùy chỉnh theme PrimeNG hiện có.
+- Font Gilroy dùng các file local, khai báo regular/bold với `font-display: swap`; đường dẫn font tương đối để hỗ trợ triển khai dưới đường dẫn con.
+- Palette chính: canvas `#101722`, surface `#182230`, surface nâng `#223044`, chữ `#e6edf7`, chữ phụ `#a0b0c3`, accent `#38bdf8`. Có token riêng cho success, warning, danger và backdrop.
+- Đồng nhất button, input, dialog, toast, bảng và phân trang PrimeNG; bổ sung focus bàn phím, scrollbar tối và chế độ giảm chuyển động.
+- Mount `app-notification` tại app root và import `NotificationModule` để hiển thị thông báo từ service hiện có. Loading overlay có thông điệp và `role="status"`.
+- Đổi tiêu đề tài liệu HTML thành Monitor Log và đặt `lang="vi"`.
+
+### Các màn hình
+
+| Khu vực | Thay đổi đã triển khai |
+| --- | --- |
+| Login | Bố cục giới thiệu sản phẩm và form; mobile ưu tiên form. Có nút hiện/ẩn mật khẩu, autocomplete, lỗi theo trường và trạng thái đang gửi. Thay liên kết quên mật khẩu chưa có route bằng hướng dẫn liên hệ quản trị viên. |
+| Đổi mật khẩu bắt buộc | Dùng chung style với login; nhãn và lỗi cho từng trường, kiểm tra hiển thị xác nhận mật khẩu không khớp. |
+| Workspace | Thay nội dung mẫu bị comment bằng tổng quan dữ liệu dự án thực tế và màn hướng dẫn tạo/chọn dự án; thêm các Output để mở quản lý từ content. |
+| Sidebar | Gộp style bị ghi đè, đồng nhất theme và câu chữ, làm rõ mục đang chọn bằng dải cyan. Mặc định thu gọn trên màn hình ≤768px; khi mở trên mobile, sidebar phủ lên nội dung. Form tạo dự án vẫn nằm trong sidebar. |
+| Thành viên | Theme thống nhất cho danh sách, tìm kiếm, candidates, xác nhận thêm/xóa và trạng thái rỗng/lỗi. Mobile dùng dialog toàn màn hình; bổ sung CDK focus trap cho dialog và xác nhận lồng nhau. |
+| Cấu hình dự án | Restyle tab module/trạng thái ticket, bảng, bộ lọc, editor và phân trang. Editor cuộn được trên màn hình nhỏ, có focus trap; Escape đóng editor trước, rồi mới đến dialog ngoài, và không đóng khi đang lưu. |
+| Session Review | Header có session ID và liên kết về workspace; theme tối cho ảnh/video, thông tin ticket và các panel DevTools. Màn hình ≤900px xếp media và DevTools theo chiều dọc. |
+| Ảnh/video | Phóng to ảnh bằng native dialog, hỗ trợ Escape và quản lý focus của trình duyệt. Chuẩn hóa nhãn điều khiển video; phím tắt nhận đúng phần tử trong Shadow DOM và bỏ qua input, select, button, link, vùng chỉnh sửa hoặc khi mở ảnh phóng to. |
+| DevTools | Đồng bộ Console, Network, request detail, thông tin phiên và thao tác. Tab Network có trạng thái chọn đúng ngay khi mở; tab cập nhật `aria-pressed`. |
+| 403/404 | Thay ảnh trang trí và vị trí cố định bằng layout responsive, thông điệp rõ ràng, liên kết về workspace và đăng nhập. |
+
+### Tổ chức stylesheet
+
+- Session: `review.css` cho layout/player; `screenshot-review.css` cho ảnh/lightbox; `devtools-panel.css` cho khung/filter; `network-inspector.css` cho request detail; `console-panel.css` cho console; `session-view.component.scss` cho host và trạng thái tải/lỗi.
+- Sidebar: `sidebar.component.scss`, `project-dialog.scss`, `project-create-form.scss`.
+- Thành viên: `project-member-management.component.scss`, `member-list.scss`, `member-confirmation.scss`.
+
+Các file được khai báo trong `styleUrls` của component tương ứng. Session vẫn dùng Shadow DOM; CSS custom properties kế thừa từ theme ngoài vào host, còn style nội bộ được nạp trong component. Đã loại bỏ CSS session cũ không còn dùng và các rule trùng/ghi đè; giữ nguyên giới hạn CSS budget trong `angular.json`.
+
+### Kiểm tra đã thực hiện
+
+Kết quả của đợt triển khai ngày 22/10/2026:
+
+- `npm run build` (production): thành công, không có cảnh báo budget.
+- `git diff --check`: đạt sau khi sửa whitespace.
+- Chrome headless tại desktop 1440px và mobile 390px, dùng server localhost và dữ liệu giả lập: kiểm tra login, đổi mật khẩu, workspace, thành viên/candidates, cấu hình/editor, 403/404 và session.
+- Kiểm tra tương tác: validation login, hiện/ẩn mật khẩu, toast lỗi, mở màn quản lý, focus khi mở dialog, chuyển tab DevTools, mở/đóng ảnh bằng Escape, phát/dừng video và thay đổi tốc độ phát.
+- Kiểm tra thêm session không có media và session lỗi; xem ảnh chụp desktop/mobile để rà bố cục. Không ghi nhận lỗi JavaScript trong các kịch bản đã chạy.
+
+Các kiểm tra giao diện trên không thay thế kiểm thử tích hợp backend thật. Script kiểm tra và ảnh chụp tạm nằm trong `/tmp` khi thực hiện, không phải bộ test được lưu trong repository. Lần cập nhật tài liệu ngày 23/10/2026 không chạy lại các kiểm tra runtime này.
+
+### Điểm đã trao đổi nhưng chưa sửa
+
+`ConfirmDialogComponent` vẫn khai báo `styleClassConfirm` và `styleClassCancel` bằng `@Input()` để component cha có thể truyền class tùy biến. Giá trị mặc định của nút Hủy hiện vẫn chứa `p-button-danger`. Đã giải thích rằng nút Hủy nên trung tính, còn màu danger dành cho hành động xóa; việc đổi các giá trị mặc định này chưa được thực hiện trong mã nguồn.
 

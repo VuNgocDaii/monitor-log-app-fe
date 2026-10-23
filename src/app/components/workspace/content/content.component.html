@@ -1,57 +1,45 @@
 <main class="content">
   <header class="content-header">
-    <!-- <div class="breadcrumb">
-      <i [ngClass]="selectedItem.icon"></i>
-      <strong>{{ selectedItem.label }}</strong>
-      <span class="private-label"><i class="pi pi-lock"></i> Private</span>
-    </div>
-
-    <div class="header-actions">
-      <span class="edited-time">Edited Dec 17, 2025</span>
-      <button type="button"><i class="pi pi-lock"></i> Share</button>
-      <button type="button" aria-label="Sao chép liên kết"><i class="pi pi-link"></i></button>
-      <button type="button" aria-label="Yêu thích"><i class="pi pi-star"></i></button>
-      <button type="button" aria-label="Thêm"><i class="pi pi-ellipsis-h"></i></button>
-    </div> -->
+    <div class="product-mark"><i class="pi pi-chart-line" aria-hidden="true"></i><span>Monitor Log</span></div>
+    <span class="workspace-label">Không gian làm việc</span>
   </header>
 
-  <section *ngIf="isGettingStarted; else emptyPage" class="page">
-    <!-- <div class="page-inner">
-      <div class="page-emoji">👋</div>
-      <h1>Getting Started</h1>
-
-      <div class="checklist">
-        <label
-          *ngFor="let item of checklist"
-          class="checklist-item"
-          [class.completed]="item.completed"
-          [class.nested]="item.nested"
-        >
-          <input type="checkbox" [checked]="item.completed" />
-          <span>{{ item.label }}</span>
-        </label>
-
-        <details class="toggle-block">
-          <summary>This is a toggle block. Click the little triangle to see a few more useful tips!</summary>
-          <p>Use the sidebar to organize pages and open the content you need.</p>
-        </details>
+  <section *ngIf="selectedProject as project; else noProject" class="project-overview">
+    <div class="project-identity">
+      <div class="project-signal" [class.project-signal--archived]="project.status === 'archived'" aria-hidden="true"></div>
+      <div>
+        <p class="project-key">{{ project.projectKey }}</p>
+        <h1>{{ project.projectName }}</h1>
+        <p class="project-description">{{ project.description || 'Chưa có mô tả cho dự án này.' }}</p>
       </div>
-    </div> -->
+      <span class="project-status" [class.project-status--archived]="project.status === 'archived'">{{ project.status === 'archived' ? 'Đã lưu trữ' : 'Đang hoạt động' }}</span>
+    </div>
+
+    <div class="overview-grid" aria-label="Tổng quan dự án">
+      <article class="metric"><i class="pi pi-ticket" aria-hidden="true"></i><strong>{{ project.ticketCount }}</strong><span>Ticket chưa lưu trữ</span></article>
+      <article class="metric"><i class="pi pi-users" aria-hidden="true"></i><strong>{{ project.memberCount }}</strong><span>Thành viên dự án</span></article>
+      <article class="metric metric--date"><i class="pi pi-clock" aria-hidden="true"></i><strong>{{ (project.updatedAt || project.createdAt) | date:'dd/MM/yyyy' }}</strong><span>{{ project.updatedAt ? 'Cập nhật gần nhất' : 'Ngày tạo dự án' }}</span></article>
+    </div>
+
+    <section class="next-step">
+      <div>
+        <h2>Quản lý dự án</h2>
+        <p>{{ project.status === 'archived' ? 'Dự án đã lưu trữ. Khôi phục từ menu dự án để tiếp tục chỉnh sửa.' : 'Thiết lập nhóm làm việc, module và trạng thái phù hợp với quy trình kiểm thử.' }}</p>
+      </div>
+    </section>
+    <div class="project-actions">
+      <button type="button" class="action-button" (click)="manageProject.emit(project)"><i class="pi pi-users" aria-hidden="true"></i> Quản lý thành viên</button>
+      <button type="button" class="action-button" (click)="configureProject.emit(project)"><i class="pi pi-cog" aria-hidden="true"></i> Cấu hình dự án</button>
+    </div>
   </section>
 
-  <ng-template #emptyPage>
-    <!-- <section class="page">
-      <div class="page-inner">
-        <i class="empty-icon" [ngClass]="selectedItem.icon"></i>
-        <h1>{{ selectedItem.label }}</h1>
-        <p class="empty-description">
-          Nội dung của trang {{ selectedItem.label }} sẽ hiển thị tại đây.
-        </p>
-      </div>
-    </section> -->
+  <ng-template #noProject>
+    <section class="welcome-state">
+      <div class="welcome-glyph"><i class="pi pi-chart-line" aria-hidden="true"></i></div>
+      <p class="welcome-kicker">Không gian của {{ displayName }}</p>
+      <h1>Chọn một dự án để bắt đầu theo dõi.</h1>
+      <p>Dự án là nơi tập hợp session, log và cấu hình kiểm thử. Bạn có thể chọn dự án ở thanh bên hoặc tạo dự án mới.</p>
+      <button type="button" class="action-button action-button--primary" (click)="createProject.emit()"><i class="pi pi-plus" aria-hidden="true"></i> Tạo dự án</button>
+    </section>
   </ng-template>
-
-  <!-- <button type="button" class="help-button" aria-label="Trợ giúp">
-    <i class="pi pi-question"></i>
-  </button> -->
 </main>

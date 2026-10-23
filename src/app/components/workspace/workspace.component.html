@@ -1,5 +1,6 @@
 <div class="workspace">
   <app-sidebar
+    #sidebar
     [currentUser]="currentUser"
     [activeItemId]="selectedItem.id"
     (itemSelected)="onMenuItemSelected($event)"
@@ -12,6 +13,9 @@
     [currentUser]="currentUser"
     [selectedItem]="selectedItem"
     [sidebarCollapsed]="sidebarCollapsed"
+    (manageProject)="openProjectManagement($event)"
+    (configureProject)="openProjectConfiguration($event)"
+    (createProject)="sidebar.openCreateProject()"
   ></app-content>
 
   <app-project-member-management

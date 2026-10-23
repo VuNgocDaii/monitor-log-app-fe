@@ -78,14 +78,14 @@ export function mountDevtoolsPanel(root: HTMLElement, telemetry: TabTelemetryDat
     <section class="devtools-panel">
       <div class="devtools-head">
         <strong>DevTools</strong>
-        <span class="devtools-head-right">Page telemetry</span>
+        <span class="devtools-head-right">Dữ liệu ghi nhận</span>
       </div>
 
       <nav class="devtools-tabs">
-        ${tabButton('info', 'Info')}
+        ${tabButton('info', 'Thông tin')}
         ${tabButton('console', 'Console', telemetry?.console.length || 0)}
         ${tabButton('network', 'Network', telemetry?.network.length || 0)}
-        ${tabButton('actions', 'Actions', telemetry?.actions.length || 0)}
+        ${tabButton('actions', 'Thao tác', telemetry?.actions.length || 0)}
         ${tabButton('backend', 'Backend')}
       </nav>
 
@@ -98,6 +98,7 @@ export function mountDevtoolsPanel(root: HTMLElement, telemetry: TabTelemetryDat
       state.active = button.dataset['devtab'] || 'actions';
       root.querySelectorAll('[data-devtab]').forEach(item => {
         item.classList.toggle('active', item === button);
+        item.setAttribute('aria-pressed', String(item === button));
       });
       render();
     });
@@ -352,7 +353,8 @@ export function mountDevtoolsPanel(root: HTMLElement, telemetry: TabTelemetryDat
 function tabButton(key: string, label: string, badge = 0) {
   return `
     <button
-      class="devtab ${key === 'actions' ? 'active' : ''}"
+      class="devtab ${key === 'network' ? 'active' : ''}"
+      aria-pressed="${key === 'network'}"
       data-devtab="${key}"
     >
       ${label}

@@ -1,0 +1,19 @@
+.confirmation-body {
+  display: flex;
+  padding: 8px 0;
+  align-items: flex-start;
+  gap: 16px;
+  line-height: 1.7;
+}
+
+.confirmation-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--monitor-warning-soft);
+  color: var(--monitor-warning);
+  font-size: 18px;
+}

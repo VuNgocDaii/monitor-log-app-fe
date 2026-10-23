@@ -1,0 +1,238 @@
+/* Application tokens also inherit into the session viewer's Shadow DOM. */
+
+:root {
+  --monitor-canvas: #101722;
+  --monitor-surface: #182230;
+  --monitor-surface-raised: #223044;
+  --monitor-line: #314156;
+  --monitor-text: #e6edf7;
+  --monitor-text-muted: #a0b0c3;
+  --monitor-accent: #38bdf8;
+  --monitor-accent-soft: #15364a;
+  --monitor-success: #64dfb2;
+  --monitor-success-soft: #193c34;
+  --monitor-warning: #f4c76a;
+  --monitor-warning-soft: #3b3220;
+  --monitor-danger: #ffa1af;
+  --monitor-danger-soft: #412731;
+  --monitor-on-accent: #072536;
+  --monitor-backdrop: rgba(5, 10, 18, .78);
+  --monitor-radius: 12px;
+  --monitor-font: 'Gilroy', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family: var(--monitor-font);
+  --primary-color: var(--monitor-accent);
+  --primary-color-text: var(--monitor-on-accent);
+  --text-color: var(--monitor-text);
+  --text-color-secondary: var(--monitor-text-muted);
+  --surface-ground: var(--monitor-canvas);
+  --surface-card: var(--monitor-surface);
+  --surface-overlay: var(--monitor-surface-raised);
+  --surface-border: var(--monitor-line);
+  --surface-hover: var(--monitor-surface-raised);
+  color-scheme: dark;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--monitor-canvas);
+  color: var(--monitor-text);
+  font-family: var(--monitor-font);
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+:focus-visible {
+  outline: 2px solid var(--monitor-accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--monitor-accent-soft);
+  color: var(--monitor-text);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--monitor-line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--monitor-line);
+  border-radius: 8px;
+}
+
+.p-component {
+  font-family: var(--monitor-font);
+}
+
+.p-inputtext, .p-dropdown, .p-multiselect, .p-inputnumber-input {
+  background: var(--monitor-canvas);
+  border: 1px solid var(--monitor-line);
+  color: var(--monitor-text);
+  border-radius: 8px;
+}
+
+.p-inputtext:enabled:focus, .p-dropdown:not(.p-disabled).p-focus {
+  border-color: var(--monitor-accent);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, .15);
+}
+
+.p-button {
+  min-height: 40px;
+  background: var(--monitor-accent);
+  border: 1px solid var(--monitor-accent);
+  border-radius: 8px;
+  color: var(--monitor-on-accent);
+}
+
+.p-button:enabled:hover {
+  background: #7dd3fc;
+  border-color: #7dd3fc;
+  color: var(--monitor-on-accent);
+}
+
+.p-button.p-button-text, .p-button.p-button-outlined, .p-button.p-button-secondary {
+  background: transparent;
+  border-color: var(--monitor-line);
+  color: var(--monitor-text);
+}
+
+.p-dialog {
+  max-width: calc(100vw - 32px);
+  border: 1px solid var(--monitor-line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px #0006;
+}
+
+.p-dialog .p-dialog-header, .p-dialog .p-dialog-content, .p-dialog .p-dialog-footer {
+  background: var(--monitor-surface);
+  color: var(--monitor-text);
+}
+
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid var(--monitor-line);
+}
+
+.p-dialog .p-dialog-footer {
+  padding-top: 18px;
+  border-top: 1px solid var(--monitor-line);
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: var(--monitor-text-muted);
+}
+
+.p-dialog-mask.p-component-overlay {
+  background: var(--monitor-backdrop);
+}
+
+.p-toast {
+  max-width: calc(100vw - 32px);
+}
+
+.p-toast .p-toast-message {
+  background: var(--monitor-surface-raised);
+  border: 1px solid var(--monitor-line);
+  border-left: 3px solid var(--monitor-accent);
+  border-radius: 10px;
+  color: var(--monitor-text);
+  box-shadow: 0 12px 40px #0005;
+}
+
+.p-toast .p-toast-message[class*='p-toast-message-'] {
+  background: var(--monitor-surface-raised);
+  border: 1px solid var(--monitor-line);
+  border-left: 3px solid var(--monitor-accent);
+  color: var(--monitor-text);
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+  border-left-color: var(--monitor-danger);
+}
+
+.p-toast .p-toast-message.p-toast-message-success {
+  border-left-color: var(--monitor-success);
+}
+
+.p-toast .p-toast-message.p-toast-message-warn {
+  border-left-color: var(--monitor-warning);
+}
+
+.p-toast .p-toast-message[class*='p-toast-message-'] .p-toast-icon-close {
+  color: var(--monitor-text-muted);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--monitor-surface-raised);
+  border-color: var(--monitor-line);
+  color: var(--monitor-text-muted);
+}
+
+.p-datatable .p-datatable-tbody > tr, .p-paginator, .p-dropdown-panel, .p-multiselect-panel {
+  background: var(--monitor-surface);
+  color: var(--monitor-text);
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--monitor-line);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+  background: var(--monitor-accent-soft);
+  color: var(--monitor-text);
+}
+
+.p-datatable.p-datatable-hoverable-rows .p-datatable-tbody > tr:not(.p-highlight):hover {
+  background: var(--monitor-surface-raised);
+  color: var(--monitor-text);
+}
+
+.p-paginator .p-paginator-current,
+.p-paginator .p-paginator-pages .p-paginator-page,
+.p-paginator .p-paginator-first, .p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next, .p-paginator .p-paginator-last,
+.p-dropdown .p-dropdown-trigger {
+  color: var(--monitor-text-muted);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item,
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  color: var(--monitor-text);
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight,
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover {
+  background: var(--monitor-accent-soft);
+  color: var(--monitor-accent);
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--monitor-accent-soft);
+  color: var(--monitor-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

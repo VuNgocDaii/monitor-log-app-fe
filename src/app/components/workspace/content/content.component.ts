@@ -1,11 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ProjectResponse } from 'src/app/services/project.service';
 import { WorkspaceMenuItem } from '../sidebar/sidebar.component';
-
-interface ChecklistItem {
-  label: string;
-  completed: boolean;
-  nested?: boolean;
-}
 
 @Component({
   selector: 'app-content',
@@ -21,15 +16,15 @@ export class ContentComponent {
 
   @Input() sidebarCollapsed = false;
   @Input() currentUser: any = null;
-  readonly checklist: ChecklistItem[] = [
-    { label: 'Create an account with Notion', completed: true },
-    { label: 'Click anywhere below and type / to see what you can create – headers, tables, to-do’s, etc.', completed: false },
-    { label: 'Type /page to add a new page and nest anything, anywhere', completed: false, nested: true },
-    { label: 'Find, organize, and add new pages using the sidebar to the left 👈', completed: false },
-    { label: 'Check out the Todo List on the left 👈 we added for you with some more tips and tricks to best use Notion', completed: false },
-  ];
+  @Output() manageProject = new EventEmitter<ProjectResponse>();
+  @Output() configureProject = new EventEmitter<ProjectResponse>();
+  @Output() createProject = new EventEmitter<void>();
 
-  get isGettingStarted(): boolean {
-    return this.selectedItem.id === 'getting-started';
+  get selectedProject(): ProjectResponse | undefined {
+    return this.selectedItem.project;
+  }
+
+  get displayName(): string {
+    return this.currentUser?.fullName || this.currentUser?.username || 'bạn';
   }
 }

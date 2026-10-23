@@ -20,7 +20,7 @@ import {
 @Component({
   selector: 'app-project-member-management',
   templateUrl: './project-member-management.component.html',
-  styleUrls: ['./project-member-management.component.scss'],
+  styleUrls: ['./project-member-management.component.scss', './member-confirmation.scss', './member-list.scss'],
 })
 export class ProjectMemberManagementComponent implements OnInit, OnDestroy {
   @Input() project!: ProjectResponse;

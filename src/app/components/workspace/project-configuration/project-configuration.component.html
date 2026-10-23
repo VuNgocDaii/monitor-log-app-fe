@@ -1,5 +1,6 @@
 <div class="configuration-overlay" (click)="close()">
   <section class="configuration-dialog" role="dialog" aria-modal="true" aria-labelledby="configuration-title"
+    cdkTrapFocus [cdkTrapFocusAutoCapture]="true" (keydown.escape)="onEscape($event)"
     (click)="$event.stopPropagation()">
     <header class="configuration-header">
       <div>
@@ -109,7 +110,7 @@
     </div>
 
     <div *ngIf="editorOpen" class="editor-overlay" role="presentation" (click)="cancelEditor()">
-      <section class="editor-popup" role="dialog" aria-modal="true"
+      <section class="editor-popup" role="dialog" aria-modal="true" cdkTrapFocus [cdkTrapFocusAutoCapture]="true"
         [attr.aria-labelledby]="tab === 'modules' ? 'module-editor-title' : 'status-editor-title'"
         (click)="$event.stopPropagation()">
         <header class="editor-popup-header">

@@ -1,11 +1,10 @@
-<p-dialog [(visible)]="visible" header="Xác nhận" [modal]="true" [style]="{width:'500px'}" (onHide)="cancel()" [closable]="closable" [closeOnEscape]="closeOnEscape">
-  <div class="flex align-items-center justify-content-begin">
-    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem; color: var(--yellow-300);"></i>
-    <span [innerHTML]="confirmText"></span>
+<p-dialog [(visible)]="visible" header="Xác nhận thao tác" [modal]="true" [style]="{width:'460px'}" (onHide)="cancel()" [closable]="closable" [closeOnEscape]="closeOnEscape">
+  <div class="confirmation-body">
+    <span class="confirmation-icon"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></span>
+    <div [innerHTML]="confirmText"></div>
   </div>
   <ng-template pTemplate="footer">
-    <p-button pRipple icon="pi pi-times" [styleClass]="styleClassCancel" [label]="cancelLabel"
-      (click)="cancel()" *ngIf="isShowCloseButton"></p-button>
-    <button pButton pRipple icon="pi pi-check" [class]="styleClassConfirm" [label]="confirmLabel" (click)="onConfirm.emit()"></button>
+    <p-button [styleClass]="styleClassCancel" [label]="cancelLabel" (click)="cancel()" *ngIf="isShowCloseButton"></p-button>
+    <button pButton [class]="styleClassConfirm" [label]="confirmLabel" (click)="onConfirm.emit()"></button>
   </ng-template>
 </p-dialog>

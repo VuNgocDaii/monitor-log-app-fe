@@ -1,19 +1,11 @@
-<div>
-    <img class="img-number4" src="assets/images/4-7.png" />
-</div>
-
-<div>
-    <img class="img-number3" src="assets/images/3-2.png" />
-</div>
-
-<div>
-    <img class="img-403" src="assets/images/403-3.png" />
-</div>
-
-<div>
-    <img class="img-doctor" src="assets/images/doctor-5.png" />
-</div>
-
- <h1 style="margin-top: -38rem; margin-left: 513px; font-size: 38px; font-weight: 700;  ;color: #005da6;">Không cho phép truy cập!</h1>
- <!-- <h1 style="margin-left: 902px; margin-top: -4rem; font-weight: 700;color: #c94c24;">!!!</h1> -->
- <a routerLink="/" class="btn" pRipple type="button"> <i class="pi pi-arrow-left" style="font-size: 15px"></i> Trang chủ</a>
+<main class="error-page">
+  <a routerLink="/workspace" class="error-brand"><i class="pi pi-chart-line" aria-hidden="true"></i> Monitor Log</a>
+  <section class="error-content">
+    <span class="error-icon"><i class="pi pi-lock" aria-hidden="true"></i></span>
+    <p class="error-code">Lỗi 403</p>
+    <h1>Bạn chưa có quyền truy cập</h1>
+    <p>Liên hệ quản trị viên để được cấp quyền, hoặc quay lại không gian làm việc.</p>
+    <a routerLink="/workspace" class="error-action"><i class="pi pi-angle-left" aria-hidden="true"></i> Về không gian làm việc</a>
+    <a routerLink="/login" class="error-login">Đăng nhập bằng tài khoản khác</a>
+  </section>
+</main>

@@ -35,7 +35,7 @@ interface WorkspaceMenuSection {
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styleUrls: ['./sidebar.component.scss'],
+  styleUrls: ['./sidebar.component.scss', './project-dialog.scss', './project-create-form.scss'],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   @Input() activeItemId = 'getting-started';
@@ -62,7 +62,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     input?.nativeElement.focus();
   }
 
-  collapsed = false;
+  collapsed = typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches;
   loadingProjects = false;
   projectListError = '';
   hasMoreProjects = false;
@@ -95,7 +95,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   readonly projectSection: WorkspaceMenuSection = {
     id: 'projects',
-    title: 'Projects',
+    title: 'Dự án',
     allowAdd: true,
     items: [],
   };
@@ -145,7 +145,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (!response || !Array.isArray(response.items)) {
-            this.projectListError = 'API danh sách project trả dữ liệu không hợp lệ.';
+            this.projectListError = 'API danh sách dự án trả dữ liệu không hợp lệ.';
             return;
           }
 
@@ -162,7 +162,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         },
         error: (error: HttpErrorResponse) => {
           this.projectListError = this.getErrorMessage(
-            error, 'Không tải được danh sách project.'
+            error, 'Không tải được danh sách dự án.'
           );
         },
       });
@@ -203,11 +203,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
     this.createProjectError = '';
 
     if (!projectName || projectName.length > 255) {
-      this.createProjectError = 'Tên project bắt buộc và tối đa 255 ký tự.';
+      this.createProjectError = 'Tên dự án bắt buộc và tối đa 255 ký tự.';
       return;
     }
     if (!/^[A-Z][A-Z0-9_]{0,19}$/.test(projectKey)) {
-      this.createProjectError = 'Mã project bắt đầu bằng chữ cái, chỉ gồm chữ cái, số hoặc _, tối đa 20 ký tự.';
+      this.createProjectError = 'Mã dự án bắt đầu bằng chữ cái, chỉ gồm chữ cái, số hoặc _, tối đa 20 ký tự.';
       return;
     }
 
@@ -232,7 +232,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         },
         error: (error: HttpErrorResponse) => {
           this.createProjectError = this.getErrorMessage(
-            error, 'Không tạo được project. Vui lòng thử lại.'
+            error, 'Không tạo được dự án. Vui lòng thử lại.'
           );
         },
       });
